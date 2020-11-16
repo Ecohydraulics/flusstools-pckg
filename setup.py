@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from pathlib import Path
 
 lines = Path(".").joinpath("__init__.py")
-version = "0.1.2"  # will be overwritten if defined in init
+# version = "0.1.2"  # will be overwritten if defined in init
 for line in lines.read_text().split("\n"):
     if line.startswith("__version__ ="):
         version = line.split(" = ")[-1].strip('"')
@@ -30,6 +30,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "alphashape",
+        "descartes",
         "earthpy",
         "gdal",
         "geojson",
@@ -43,12 +44,9 @@ setup(
         "rasterio",
         "rasterstats",
         "scipy",
-        "shapefile",
         "shapely",
-        "sqlite3",
         "tabulate",
-        "tkinter",
-        'importlib-resources~=3.0.0; python_version > "3.4"',
+        "tk",
         ],
     include_package_data=True,
     classifiers=[

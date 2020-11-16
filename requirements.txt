@@ -11,10 +11,9 @@ pandas
 pyshp
 rasterio
 rasterstats
-tkinter
+tk
 scipy
 shapely
-sqlite3
 tabulate
 
 

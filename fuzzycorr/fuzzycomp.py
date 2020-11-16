@@ -2,7 +2,7 @@
 Description
 """
 
-from plotter import *
+from .plotter import *
 
 
 def jaccard(a, b):
