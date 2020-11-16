@@ -10,7 +10,7 @@ With code blocks from:
 """
 import os, sys
 sys.path.insert(0, os.path.abspath("."))
-from helpers import *
+from ..helpers import *
 
 import ast
 import xml.sax

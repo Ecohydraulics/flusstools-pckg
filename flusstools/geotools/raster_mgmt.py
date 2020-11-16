@@ -1,6 +1,6 @@
 import os, sys
 sys.path.insert(0, os.path.abspath("."))
-from helpers import *
+from ..helpers import *
 
 
 def open_raster(file_name, band_number=1):
