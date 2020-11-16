@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from pathlib import Path
 
 lines = Path(".").joinpath("__init__.py")
-version = "0.1.1"  # will be overwritten if defined in init
+version = "0.1.2"  # will be overwritten if defined in init
 for line in lines.read_text().split("\n"):
     if line.startswith("__version__ ="):
         version = line.split(" = ")[-1].strip('"')
