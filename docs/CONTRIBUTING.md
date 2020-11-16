@@ -16,6 +16,8 @@ If you made changes in *setup.py*, run first (and troubleshoot any error message
 python setup.py develop
 ```
 
+Before adding a new version of *flusstools*, please inform about the severity and version numbering semantics on [python.org](https://www.python.org/dev/peps/pep-0440/).
+
 1. `cd` to your local *flusstools* folder (in *Terminal*)
 1. Create *flusstools* locally </br>`python setup.py sdist bdist_wheel` 
 1. Upload the (new version) to TestPyPI (with your TestPyPI account):</br>`twine upload --repository-url https://test.pypi.org/legacy/ dist/*`</br>*If any error occurs, fix it and rebuild the package (previous step).
