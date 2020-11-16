@@ -2,7 +2,7 @@
 functions related to search for vegetation matching the users input
 """
 
-from plant import *
+from .plant import *
 
 
 def search_db_via_query(query):

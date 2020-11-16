@@ -2,7 +2,7 @@
 Description
 """
 
-from search import *
+from .search import *
 
 
 def send_request():

@@ -1,5 +1,5 @@
 """Global variables"""
-from var_config import *
+from .var_config import *
 
 
 def cache(fun):

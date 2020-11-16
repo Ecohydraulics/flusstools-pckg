@@ -2,7 +2,7 @@
 Description
 """
 
-from prepro import *
+from .prepro import *
 
 
 def read_raster(raster_path):

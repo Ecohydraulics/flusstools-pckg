@@ -27,7 +27,7 @@ python setup.py develop
 
 ## Push to PyPI
 
-If you could build and install the test version successfully, you can push the new version to PyPI. **Make sure to increase the `"major.minor.micro"` version number in *ROOT/__init__.py***. Then push to PyPI (with your PyPI account):
+If you could build and install the test version successfully, you can push the new version to PyPI. **Make sure to increase the `VERSION="major.minor.micro" in *ROOT/setup.py***. Then push to PyPI (with your PyPI account):
 
 `twine upload dist/*`
 
