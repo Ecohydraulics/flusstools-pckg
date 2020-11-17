@@ -1,5 +1,6 @@
 alphashape
 earthpy
+gdal
 geojson
 geopandas
 laspy
