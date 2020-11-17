@@ -1,6 +1,5 @@
 alphashape
 earthpy
-gdal
 geojson
 geopandas
 laspy
@@ -15,5 +14,3 @@ tk
 scipy
 shapely
 tabulate
-
-
