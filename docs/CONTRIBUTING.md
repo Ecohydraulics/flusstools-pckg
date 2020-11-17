@@ -42,6 +42,17 @@ Please note that we are currently still in the *growing* phase of *flusstools* (
 Because `gdal` can still not be imported remotely on *readthedocs*, it is currently not possible that the docs automatically synchronize with the latest *flusstools* version. For this reason, please manually update your code also in the *flusstools-docs* repo:
 
 ```
-git clone 
+git clone https://github.com/Ecohydraulics/flusstools-docs.git
+cd flusstools-docs
 ```
 
+Then copy your changed scripts locally to `flusstools-docs/flusstools/YOUR-MODULE`, along with possible changes in `flusstools-docs/docs/YOUR-MODULE.rst`. Push your update to the remote docs:
+
+```
+git add .
+git commit -m "updated SOMETHING"
+git pull --rebase
+git push
+```
+
+Sebastian will be notified and regenerate the docs.
