@@ -37,4 +37,11 @@ If you could build and install the test version successfully, you can push the n
 
 Please note that we are currently still in the *growing* phase of *flusstools* (version < 0.2). Since *version 0.2*, login at github.com and create a new *release* after merging branches.
 
+## Update docs
+
+Because `gdal` can still not be imported remotely on *readthedocs*, it is currently not possible that the docs automatically synchronize with the latest *flusstools* version. For this reason, please manually update your code also in the *flusstools-docs* repo:
+
+```
+git clone 
+```
 

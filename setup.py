@@ -18,12 +18,12 @@ URL = "https://flusstools.readthedocs.io/"
 EMAIL = "sebastian.schwindt@iws.uni-stuttgart.de"
 AUTHOR = "FlussTeam"
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.13'
+VERSION = '0.1.16'
 LICENSE = "BSD License"
 KEYWORDS = "rivers geo-spatial data processing numerical model validation"
 
 # What packages are required for this module to be executed?
-if os.environ.get("READTHEDOCS") == "True":
+if "READTHEDOCS" in os.environ:
     print("RTD import enabled (ignore dependencies).")
     REQUIRED = []
 else:
