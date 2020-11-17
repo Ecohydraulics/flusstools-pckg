@@ -18,30 +18,33 @@ URL = "https://flusstools.readthedocs.io/"
 EMAIL = "sebastian.schwindt@iws.uni-stuttgart.de"
 AUTHOR = "FlussTeam"
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.10'
+VERSION = '0.1.13'
 LICENSE = "BSD License"
 KEYWORDS = "rivers geo-spatial data processing numerical model validation"
 
 # What packages are required for this module to be executed?
-REQUIRED = [
-    "alphashape",
-    "earthpy",
-    "gdal",
-    "geojson",
-    "geopandas",
-    "laspy",
-    "mapclassify",
-    "matplotlib",
-    "numpy",
-    "pandas",
-    "pyshp",
-    "rasterio",
-    "rasterstats",
-    "scipy",
-    "shapely",
-    "tabulate",
-    "tk",
-]
+if os.environ.get("READTHEDOCS") == "True":
+    print("RTD import enabled (ignore dependencies).")
+    REQUIRED = []
+else:
+    REQUIRED = [
+        "alphashape",
+        "earthpy",
+        "gdal",
+        "geojson",
+        "geopandas",
+        "laspy",
+        "mapclassify",
+        "matplotlib",
+        "numpy",
+        "pandas",
+        "pyshp",
+        "rasterio",
+        "rasterstats",
+        "scipy",
+        "shapely",
+        "tabulate",
+    ]
 
 # What packages are optional?
 EXTRAS = {

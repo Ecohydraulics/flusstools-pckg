@@ -2,9 +2,8 @@
 Description
 """
 
-import os, sys
-sys.path.insert(0, os.path.abspath(".") + '/lidartools')
-from lidartools.lidartools import *
+
+from ..lidartools.lidartools import *
 
 
 class Plant:

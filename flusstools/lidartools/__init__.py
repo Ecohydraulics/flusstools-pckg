@@ -1,3 +1,7 @@
-__all__ = ['file_functions', 'lidar_core', 'LiDAR_processing_GUI']
+__all__ = [
+    "file_functions",
+    "lidar_core",
+    "lidartools",
+]
 
 from .lidartools import *

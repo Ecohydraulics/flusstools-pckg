@@ -20,7 +20,7 @@ Before adding a new version of *flusstools*, please inform about the severity an
 
 1. `cd` to your local *flusstools* folder (in *Terminal*)
 1. Create *flusstools* locally </br>`python setup.py sdist bdist_wheel` 
-1. Upload the (new version) to TestPyPI (with your TestPyPI account):</br>`twine upload --repository-url https://test.pypi.org/legacy/ dist/*`</br>*If any error occurs, fix it and rebuild the package (previous step).
+1. Upload the (new version) to TestPyPI (with your TestPyPI account):</br>`twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*`</br>*If any error occurs, fix it and rebuild the package (previous step).
 1. Create a new environment and activate it to test if the upload and installation work
     * On *Linux*:</br>`python -m venv test_env`</br>`source test_env/bin/activate`
     * On *Windows* (with Anaconda):</br>`conda activate flusstools-test`

@@ -3,7 +3,7 @@ Description
 """
 
 
-from fuzzycorr.fuzzycorr import *
+from ..fuzzycorr.fuzzycorr import *
 
 
 def browse(root, entry, select='file', ftypes=[('All files', '*')]):

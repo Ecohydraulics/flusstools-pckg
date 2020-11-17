@@ -1,3 +1,8 @@
-__all__ = ['fuzzycomp', 'fuzzycorr', 'prepro', 'plotter']
+__all__ = [
+    "fuzzycorr",
+    "fuzzycomp",
+    "prepro",
+    "plotter",
+]
 
 from .fuzzycorr import *

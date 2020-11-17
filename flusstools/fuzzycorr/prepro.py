@@ -6,7 +6,7 @@ Hints:
 """
 
 
-from geotools.geotools import *
+from ..geotools.geotools import *
 
 
 class FuzzyPreProcessor:
