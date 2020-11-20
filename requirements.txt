@@ -3,6 +3,7 @@ earthpy
 gdal
 geojson
 geopandas
+h5py
 laspy
 mapclassify
 matplotlib

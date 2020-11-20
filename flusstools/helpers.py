@@ -3,7 +3,7 @@ from .var_config import *
 
 
 def cache(fun):
-    """Makes a function running in a temoprary ``__cache__`` sub-folder to enable deleting temporary trash files."""
+    """Makes a function running in a temporary ``__cache__`` sub-folder to enable deleting temporary trash files."""
     def wrapper(*args, **kwargs):
         check_cache()
         fun(*args, **kwargs)

@@ -21,6 +21,7 @@ dependencies:
   - gdal
   - geopandas
   - geojson
+  - h5py
   - laspy
   - mapclassify
   - pyshp
