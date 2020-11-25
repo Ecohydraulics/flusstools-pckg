@@ -17,14 +17,13 @@ def send_request():
 
 
 def inputquestion():
-    """function that lets the user put data into the database
+    """Function that lets the user put data into the database
 
-    the function provides 2 options for data input, if option 1 is chosen via console input "1", the user can provide the name of a csv file
-    if option 2 is chosen, the user can add a single row via sql command. If neither of those two options is chosen, the function will print a string in the python console
+    The function provides 2 options for data input, if option 1 is chosen via console input "1", the user can provide the name of a csv file.
+    If option 2 is chosen, the user can add a single row via sql command. If neither of those two options is chosen, the function will print a string in the python console.
 
     Returns:
-        string in console if none of the two options above is chosen
-
+        String in console
     """
     print('Enter 1 to input data from csv file\n Enter 2 to input data via sql command')
     src = int(input('Enter here:'))
