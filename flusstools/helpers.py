@@ -81,6 +81,35 @@ def get_file_names(directory, prefix='', suffix='', nesting=True):
     return l
 
 
+def lookup_value(df, value, src_column_name, lookup_column_name, mode="single_column", src_column_name2=""):
+    """
+    !!!FUNCTION NOT YET DEBUGGED!!!
+    lookup a value from a pandas DataFrame similar to VLOOKUP.
+    The function can read either the first value that is within a threshold value frame of
+     a single column, or two columns (mode argument).
+
+    Args:
+        df (pandas.DataFrame): Object to read from
+        value (float or int): Threshold value in the source column (src_column_name) for which the value should be looked up in the ``lookup_column_name``
+        src_column_name (str): Name of the source column that contains the initial ``value``
+        lookup_column_name (str): Name of the target column from which a value should be looked up
+        mode (str): Determines if only a single column (default: ``"single_column"``) serves as source column or if there is a second column (default: ``"two_columns"``). If ``"two_columns"`` is define, also a ``"src_column_name2"`` argument needs to be defined.
+        src_column_name2 (str): Name of a second source column that contains the initial ``value`` (only use with ``mode="two_columns"``)
+
+    Returns:
+        Value of the ``lookup_column_name`` corresponding to ``value`` in ``src_column_name``.
+    """
+    if mode is "single_column":
+        match = (df[src_column_name] <= value) & (df[src_column_name] > value)
+    elif mode is "two_columns":
+        match = (df[src_column_name] <= value) & (df[src_column_name2] > value)
+    try:
+        return df[lookup_column_name][match].values[0]
+    except:
+        # multiple error sources possible here
+        return None
+
+
 def remove_directory(directory):
     """Removes a directory and all its contents - be careful!
 
