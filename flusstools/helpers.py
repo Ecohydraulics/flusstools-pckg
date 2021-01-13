@@ -99,9 +99,9 @@ def lookup_value(df, value, src_column_name, lookup_column_name, mode="single_co
     Returns:
         Value of the ``lookup_column_name`` corresponding to ``value`` in ``src_column_name``.
     """
-    if mode is "single_column":
+    if mode == "single_column":
         match = (df[src_column_name] <= value) & (df[src_column_name] > value)
-    elif mode is "two_columns":
+    elif mode == "two_columns":
         match = (df[src_column_name] <= value) & (df[src_column_name2] > value)
     try:
         return df[lookup_column_name][match].values[0]
