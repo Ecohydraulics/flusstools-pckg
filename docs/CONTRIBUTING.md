@@ -2,6 +2,8 @@
 
 Make sure to understand the basics of building a PyPI package ([example tutorial](https://towardsdatascience.com/build-your-first-open-source-python-project-53471c9942a7)).
 
+**Because of a Bug in GDAL, new versions of FlussTools must currently be build on Linux only. Windows will crash!**
+
 ## Requirements (PyPI)
 
 * Create a [TestPyPI](https://test.pypi.org/) account
@@ -19,13 +21,19 @@ python setup.py develop
 Before adding a new version of *flusstools*, please inform about the severity and version numbering semantics on [python.org](https://www.python.org/dev/peps/pep-0440/).
 
 1. `cd` to your local *flusstools* folder (in *Terminal*)
-1. Create *flusstools* locally </br>`python setup.py sdist bdist_wheel`
-1. Upload the (new version) to TestPyPI (with your TestPyPI account):</br>`twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*`</br>*If any error occurs, fix it and rebuild the package (previous step).
+1. Create *flusstools* locally 
+	* `sudo python setup.py sdist bdist_wheel`
+1. Upload the (new version) to TestPyPI (with your TestPyPI account):
+	* `twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*`
+	* If any error occurs, fix it and rebuild the package (previous step).
 1. Create a new environment and activate it to test if the upload and installation work
     * On *Linux*:</br>`python -m venv test_env`</br>`source test_env/bin/activate`
     * On *Windows* (with Anaconda):</br>`conda activate flusstools-test`
-1. Install the new version of *flusstools* in the environment:</br>`pip install -i https://test.pypi.org/simple/ flusstools`
-1. Launch python and import *flusstools*:</br>`python`</br>`>>> import flusstools`
+1. Install the new version of *flusstools* in the environment:
+	* `pip install -i https://test.pypi.org/simple/ flusstools`
+1. Launch python and import *flusstools*:
+	* `python`
+	* `>>> import flusstools`
 
 ## Push to PyPI
 
