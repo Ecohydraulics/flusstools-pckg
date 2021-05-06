@@ -1,4 +1,4 @@
-name: flusstools
+name: flussenv
 channels:
   - conda-forge
   - defaults

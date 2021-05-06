@@ -13,12 +13,12 @@ from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = "flusstools"
-DESCRIPTION = "Analyze and design fluvial ecosystems"
+DESCRIPTION = "Analyze and design river ecosystems"
 URL = "https://flusstools.readthedocs.io/"
 EMAIL = "sebastian.schwindt@iws.uni-stuttgart.de"
 AUTHOR = "FlussTeam"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 LICENSE = "BSD License"
 KEYWORDS = "rivers geo-spatial data processing numerical model validation"
 

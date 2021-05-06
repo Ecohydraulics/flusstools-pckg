@@ -5,7 +5,7 @@ Make sure to understand the basics of building a PyPI package ([example tutorial
 ## Requirements (PyPI)
 
 * Create a [TestPyPI](https://test.pypi.org/) account
-* Create a [PyPI](https://pypi.org/) account 
+* Create a [PyPI](https://pypi.org/) account
 * Install requirements for developers (in *Terminal*)</br>`pip install -r requirements_dev.txt`
 
 ## Build and push test version
@@ -19,7 +19,7 @@ python setup.py develop
 Before adding a new version of *flusstools*, please inform about the severity and version numbering semantics on [python.org](https://www.python.org/dev/peps/pep-0440/).
 
 1. `cd` to your local *flusstools* folder (in *Terminal*)
-1. Create *flusstools* locally </br>`python setup.py sdist bdist_wheel` 
+1. Create *flusstools* locally </br>`python setup.py sdist bdist_wheel`
 1. Upload the (new version) to TestPyPI (with your TestPyPI account):</br>`twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*`</br>*If any error occurs, fix it and rebuild the package (previous step).
 1. Create a new environment and activate it to test if the upload and installation work
     * On *Linux*:</br>`python -m venv test_env`</br>`source test_env/bin/activate`
@@ -35,7 +35,7 @@ If you could build and install the test version successfully, you can push the n
 
 ## Create a new release on GitHub
 
-Please note that we are currently still in the *growing* phase of *flusstools* (version < 0.2). Since *version 0.2*, login at github.com and create a new *release* after merging branches.
+Please note that we are currently still in the *growing* phase of *flusstools*. Since *version 0.2*, login at github.com and create a new *release* after merging branches.
 
 ## Update docs
 
