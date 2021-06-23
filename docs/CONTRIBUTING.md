@@ -22,7 +22,8 @@ Before adding a new version of *flusstools*, please inform about the severity an
 
 1. `cd` to your local *flusstools* folder (in *Terminal*)
 1. Create *flusstools* locally 
-	* `sudo python setup.py sdist bdist_wheel`
+	* Linux (in Terminal): `sudo python setup.py sdist bdist_wheel`
+	* Window (in Anaconda Prompt with flussenv): `python setup.py sdist bdist_wheel`
 1. Upload the (new version) to TestPyPI (with your TestPyPI account):
 	* `twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*`
 	* If any error occurs, fix it and rebuild the package (previous step).
