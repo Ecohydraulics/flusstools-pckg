@@ -1,3 +1,15 @@
 pip
 wheel
+affine
+attrs
+click
+cligj
+snuggs
+cycler
+fonttools
+kiwisolver
+pillow
+python-dateutil
+setuptools
+traitlets
 twine

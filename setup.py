@@ -17,8 +17,8 @@ DESCRIPTION = "Analyze and design river ecosystems"
 URL = "https://flusstools.readthedocs.io/"
 EMAIL = "sebastian.schwindt@iws.uni-stuttgart.de"
 AUTHOR = "FlussTeam"
-REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "0.2.5"
+REQUIRES_PYTHON = ">=3.8.0"
+VERSION = "0.2.6"
 LICENSE = "BSD License"
 KEYWORDS = "rivers geo-spatial data processing numerical model validation"
 
@@ -38,12 +38,25 @@ else:
         "matplotlib",
         "numpy",
         "pandas",
+        "pillow",
         "pyshp",
         "rasterio",
         "rasterstats",
         "scipy",
         "shapely",
         "tabulate",
+        # build updates from 2021-11-12
+        "affine",
+        "attrs",
+        "click",
+        "cligj",
+        "snuggs",
+        "cycler",
+        "fonttools",
+        "kiwisolver",
+        "python-dateutil",
+        "setuptools",
+        "traitlets",
     ]
 
 # What packages are optional?
@@ -101,7 +114,8 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        os.system(
+            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
 
         self.status("Uploading the package to PyPI via Twine…")
         os.system("twine upload dist/*")
@@ -125,7 +139,8 @@ setup(
     python_requires=REQUIRES_PYTHON,
     keywords=KEYWORDS,
     url=URL,
-    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    packages=find_packages(
+        exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of "packages":
     # py_modules=["mypackage"],
 
