@@ -18,7 +18,7 @@ URL = "https://flusstools.readthedocs.io/"
 EMAIL = "sebastian.schwindt@iws.uni-stuttgart.de"
 AUTHOR = "FlussTeam"
 REQUIRES_PYTHON = ">=3.8.0"
-VERSION = "0.2.6"
+VERSION = "0.2.8"
 LICENSE = "BSD License"
 KEYWORDS = "rivers geo-spatial data processing numerical model validation"
 
@@ -37,6 +37,7 @@ else:
         "mapclassify",
         "matplotlib",
         "numpy",
+        "openpyxl",
         "pandas",
         "pillow",
         "pyshp",
@@ -50,9 +51,7 @@ else:
         "attrs",
         "click",
         "cligj",
-        "snuggs",
         "cycler",
-        "fonttools",
         "kiwisolver",
         "python-dateutil",
         "setuptools",

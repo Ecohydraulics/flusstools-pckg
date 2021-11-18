@@ -8,6 +8,7 @@ laspy
 mapclassify
 matplotlib
 numpy
+openpyxl
 pandas
 pyshp
 rasterio
