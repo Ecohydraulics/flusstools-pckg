@@ -24,10 +24,9 @@ dependencies:
   - h5py
   - laspy
   - mapclassify
+  - networkx
   - pyshp
   - rasterio
   - rasterstats
   - shapely
   - tk
-  # SQL DB mgmt
-  - sqlite3

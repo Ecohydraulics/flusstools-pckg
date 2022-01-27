@@ -15,10 +15,10 @@ from setuptools import find_packages, setup, Command
 NAME = "flusstools"
 DESCRIPTION = "Analyze and design river ecosystems"
 URL = "https://flusstools.readthedocs.io/"
-EMAIL = "sebastian.schwindt@iws.uni-stuttgart.de"
+EMAIL = "schwindt.water@gmail.com"
 AUTHOR = "FlussTeam"
 REQUIRES_PYTHON = ">=3.8.0"
-VERSION = "0.2.8"
+VERSION = "1.0.6"
 LICENSE = "BSD License"
 KEYWORDS = "rivers geo-spatial data processing numerical model validation"
 
@@ -33,9 +33,11 @@ else:
         "gdal",
         "geojson",
         "geopandas",
+        "h5py",
         "laspy",
         "mapclassify",
         "matplotlib",
+        "networkx",
         "numpy",
         "openpyxl",
         "pandas",
@@ -152,7 +154,7 @@ setup(
     license=LICENSE,
     project_urls={
         "Documentation": "https://flusstools.readthedocs.io/",
-        "Funding": "https://www.uni-stuttgart.de/",
+        "Funding": "https://hydro-informatics.com/",
         "Source": "https://github.com/Ecohydraulics/flusstools",
         "Tracker": "https://github.com/Ecohydraulics/flusstools/issues",
     },
@@ -160,10 +162,14 @@ setup(
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         "License :: OSI Approved :: BSD License",
-        "Development Status :: 2 - Pre-Alpha",
+        "Operating System :: OS Independent",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy"
     ],
