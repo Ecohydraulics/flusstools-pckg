@@ -53,3 +53,4 @@ tifffile>=2021.11.2
 tk>=0.1.0
 trimesh>=3.9.43
 urllib3>=1.26.8
+scikit-fuzzy>=0.4.2

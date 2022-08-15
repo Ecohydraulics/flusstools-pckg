@@ -105,6 +105,13 @@ try:
 except ImportError as e:
     raise ImportError(
         "Could not import pyproj (is it installed?). {0}".format(e))
+try:
+    import skfuzzy as fuzz
+    from skfuzzy import control as ctrl
+except ImportError as e:
+    raise ImportError(
+        "Could not import scikit-fuzzy (is it installed?). {0}".format(e))
+
 
 # GUI mgmt
 try:
@@ -121,4 +128,5 @@ sys.path.append(r'' + os.path.abspath(''))
 sys.path.insert(0, r'' + os.path.abspath('') + '/geotools')
 sys.path.insert(0, r'' + os.path.abspath('') + '/fuzzycorr')
 sys.path.insert(0, r'' + os.path.abspath('') + '/lidartools')
-sys.path.insert(0, r'' + os.path.abspath('') + '/what2plant')
+sys.path.insert(0, r'' + os.path.abspath('') + '/bed_analyst')
+
