@@ -58,6 +58,7 @@ else:
         "python-dateutil",
         "setuptools",
         "traitlets",
+        "scikit-fuzzy"
     ]
 
 # What packages are optional?
