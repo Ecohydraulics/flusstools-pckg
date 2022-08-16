@@ -46,7 +46,7 @@ else:
         "rasterio",
         "rasterstats",
         "scipy",
-        "shapely",
+        "shapely==1.8",
         "tabulate",
         # build updates from 2021-11-12
         "affine",
