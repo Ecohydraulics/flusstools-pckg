@@ -9,6 +9,7 @@ dependencies:
   - python>=3.8
   - pip
   - tabulate
+  - ipykernel
   # scientific python
   - numpy
   - pandas
