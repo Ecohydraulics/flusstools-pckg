@@ -18,7 +18,7 @@ URL = "https://flusstools.readthedocs.io/"
 EMAIL = "schwindt.water@gmail.com"
 AUTHOR = "FlussTeam"
 REQUIRES_PYTHON = ">=3.8.0"
-VERSION = "1.1.4"
+VERSION = "1.1.5"
 LICENSE = "BSD License"
 KEYWORDS = "rivers geo-spatial data processing numerical model validation"
 
