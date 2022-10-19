@@ -7,7 +7,7 @@ try:
     import lidartools
     import fuzzycorr
     import geotools
-    import bed_analyst
+    import bedanalyst
 except ModuleNotFoundError:
     print("Failed to initialize FlussTools - consider re-installation")
 
