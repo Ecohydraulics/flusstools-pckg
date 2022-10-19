@@ -1,1 +1,1 @@
-from bed_analyst import *
+from bedanalyst import *
