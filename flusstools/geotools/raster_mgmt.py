@@ -193,7 +193,7 @@ def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32
 
             list_array.append(tif.GetRasterBand(n+1).ReadAsArray())
     except RuntimeError:
-        logging.error("Error: Cannot create array list from bands.")
+        logging.error("Cannot create array list from bands.")
         return -1
 
     # sets the geodata into individual types
@@ -207,11 +207,11 @@ def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32
         epsg = int(proj.GetAttrValue('AUTHORITY', 1))
     except ValueError:
         logging.error(
-            "Error:Problems with geodata")
+            "Problems with geodata")
 
     try:
         logging.info(
-            " Creating raster with x shift of {0} units  and y shift of {1} units" .format(
+            "Creating raster with x shift of {0} units  and y shift of {1} units" .format(
                  float(x_shift),float(y_shift)))
 
     except ValueError:
@@ -227,7 +227,7 @@ def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32
                            rdtype=rdtype, options=options)
         logging.info("Successfully created shifted raster in "+file_name_new)
     except RuntimeError:
-        logging.error("Error: Could not create raster using geotools.")
+        logging.error("Could not create raster using geotools.")
         return -1
 
 
@@ -239,7 +239,7 @@ def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32
             ds = None
             logging.info("Successfully created compressed tiff in "+outfn)
         except RuntimeError:
-            logging.error("Error:Unable to preform compression")
+            logging.error("Unable to preform compression")
 
     return 0
 
