@@ -1,9 +1,7 @@
 """ This module calls the necessary functions to perform the computation
 of degree of clogging.
 """
-
-from config import *
-from utils import *
+from .utils import *
 
 
 def degree_clogging(df_samples, output_csv_path, plot=[False, False]):
