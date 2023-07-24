@@ -58,7 +58,8 @@ else:
         "python-dateutil",
         "setuptools",
         "traitlets",
-        "scikit-fuzzy"
+        "scikit-fuzzy",
+        "jupyterlab",
     ]
 
 # What packages are optional?
@@ -171,6 +172,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy"
     ],

@@ -39,6 +39,7 @@ PyWavelets>=1.2.0
 rasterio>=1.2.10
 rasterstats>=0.16.0
 requests>=2.27.1
+jupyterlab
 Rtree>=0.9.7
 scikit-image>=0.19.1
 scikit-learn>=1.0.2

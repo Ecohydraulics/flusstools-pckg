@@ -6,10 +6,11 @@ channels:
   - anaconda
 
 dependencies:
-  - python>=3.8
+  - python>=3.10
   - pip
   - tabulate
   - ipykernel
+  - jupyterlab
   # scientific python
   - numpy
   - pandas
