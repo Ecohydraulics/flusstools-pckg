@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pythomac_FlussTeam"
-version = "1.1.7"
+name = "flusstools"
+version = "1.1.8"
 authors = [
   { name="FlussTeam/Hydro-Informatics.com", email="schwindt.water@gmail.com" },
 ]
-description = "A Python package with codes to wrap and control the numerical modeling software Telemac."
+description = "A Python package to facilitate river analysis."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD License",

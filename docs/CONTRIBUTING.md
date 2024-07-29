@@ -11,20 +11,58 @@ IMPORTANT UPDATE SINCE THE LAST PUSH: WE NEED TO USE A pyproject.toml FILE NOW.
 * Create a [PyPI](https://pypi.org/) account
 * Install requirements for developers:
 
-   * `python3 -m pip install --upgrade build`
-   * `python3 -m pip install --upgrade twine`
+```sh
+python3 -m pip install --upgrade build
+python3 -m pip install --upgrade twine
+```
 
 ## Build and publish
 
-1. Generate distribution archives:
+### Generate new version archives
 
+Generate distribution archives (use Terminal in the directory `flusstools-pckg/`:
+
+```sh
 python3 -m build
+```
 
-2. Upload distribution archives:
+### Setup testpypi / pypi (first-time use only)
 
-twine upload dist/*
+Make sure you have a pypi user account and Token ready for uploading the package. I not, get it from https://test.pypi.org/manage/account/#api-tokens and https://pypi.org/manage/account/#api-tokens .
 
+To enable tokens, create a .pypirc file in the HOME directory with the following contents (replace `<your-token>` with API tokens from testpypi and pypi):
 
+```commandline
+[distutils]
+  index-servers =
+    testpypi
+    pypi
+    flusstools-test
+    flusstools
+
+[testpypi]
+  username = __token__
+  password = <your-testpypi.org.token>
+[pypi]
+  username = __token__
+  password = <your-pypi.org.token>
+[flusstools-test]
+  repository = https://pypi.org/project/flusstools/
+  username = __token__
+  password = <your-testpypi.org.token>
+[flusstools]
+  repository = https://pypi.org/project/flusstools/
+  username = __token__
+  password = <your-pypi.org.token>
+```
+
+### Upload distribution archives
+
+```sh
+python3 -m twine upload --repository testpypi dist/*
+```
+
+That's it, thanks for contributing - please still test the usage!
 
 ## Test
 
@@ -36,8 +74,6 @@ twine upload dist/*
 1. Launch python and import *flusstools*:
 	* `python`
 	* `>>> import flusstools`
-
-
 
 
 
