@@ -8,12 +8,12 @@ Flavored with code blocks from:
 
 """
 
-from helpers import *
-
 import ast
 import xml.sax
 import xml.sax.handler
 from html.parser import HTMLParser
+
+from helpers import *
 
 
 class ModHTMLParser(HTMLParser):
@@ -36,8 +36,8 @@ class ModHTMLParser(HTMLParser):
 
         Returns:
             None: Verifies if the ``tag`` argument contains the string ``"table"``
-        """
 
+        """
         if tag == "table":
             self.in_table = True
 
@@ -49,6 +49,7 @@ class ModHTMLParser(HTMLParser):
 
         Returns:
             None: Assigns ``ModHTMLParser.mapping`` and ``ModHTMLParser.series`` attributes
+
         """
         if self.in_table:
             self.buffer = data.strip(" \n\t").split(":")
@@ -61,7 +62,7 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
     """Child of ``xml.sax.handler.ContentHandler``, tailored for handling kml files."""
 
     def __init__(self):
-        #super().__init__()
+        # super().__init__()
         self.inName = False  # handle XML parser events
         self.inPlacemark = False
         self.mapping = {}
@@ -76,8 +77,8 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
 
         Returns:
             None
-        """
 
+        """
         if name == "Placemark":
             self.inPlacemark = True
             self.buffer = ""
@@ -95,6 +96,7 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
 
         Returns:
             None
+
         """
         if self.inPlacemark:
             # save text if in title in tag
@@ -108,6 +110,7 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
 
         Returns:
             None
+
         """
         self.buffer = self.buffer.strip("\n\t")
 
@@ -138,8 +141,8 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
 
         Returns:
             None
-        """
 
+        """
         try:
             # check if the coordinates column exists
             data = row["coordinates"].strip(" \t\n\r")
@@ -157,8 +160,7 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
         except:
             try:
                 g = ast.literal_eval(data)
-                points = pd.Series({"geometry": Point(g[:2]),
-                                    "altitude": g[-1]})
+                points = pd.Series({"geometry": Point(g[:2]), "altitude": g[-1]})
                 return points
             except:
                 pass
@@ -179,6 +181,7 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
 
         Returns:
             htmlparser.series: An instance of the ``ModHTMLParser()`` class
+
         """
         htmlparser = ModHTMLParser()
         htmlparser.feed(row["description"])

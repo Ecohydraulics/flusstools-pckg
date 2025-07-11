@@ -1,5 +1,4 @@
-"""
-Load, analyze, and write HDF5 (h5) data files.
+"""Load, analyze, and write HDF5 (h5) data files.
 
 Hints:
     The scientific HDF5 file format is authored by hdfgroup.org
@@ -7,12 +6,13 @@ Hints:
 
 Example:
      h5py.File("C:\\temp\\lidar\\191204_130110_Scanner_1_wff5.f5", "r")
+
 """
 
 try:
     import h5py
 except ImportError as e:
-    raise ImportError("Could not h5py (try 'pip install h5py'):\n{0}".format(e))
+    raise ImportError(f"Could not h5py (try 'pip install h5py'):\n{e}")
 
 
 def open_hdf(file_name, mode="r", *args, **kwargs):

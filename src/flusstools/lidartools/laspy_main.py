@@ -3,8 +3,9 @@
 ``process_file(source_file_name, epsg, **opts)`` (more about arguments in the function doc below)
 """
 
-from .laspy_processor import *
 import webbrowser
+
+from .laspy_processor import *
 
 
 def lookup_epsg(file_name):
@@ -20,8 +21,7 @@ def lookup_epsg(file_name):
          can be obtained with the `geo_utils <https://geo-utils.readthedocs.io>`_ package.
 
     """
-    search_string = file_name.replace(
-        "_", "+").replace(".", "+").replace("-", "+")
+    search_string = file_name.replace("_", "+").replace(".", "+").replace("-", "+")
     google_qry = "https://www.google.com/?#q=projection+crs+epsg+"
     webbrowser.open(google_qry + search_string)
 
@@ -54,8 +54,8 @@ def process_file(source_file_name, epsg, **opts):
 
     Returns:
         bool: ``True`` if successful, ``False`` otherwise
-    """
 
+    """
     default_keys = {
         "extract_attributes": "aci",
         "interpolate_gap_pixels": True,
@@ -73,46 +73,51 @@ def process_file(source_file_name, epsg, **opts):
         "max_points": 0,
     }
 
-    for k in default_keys.keys():
+    for k in default_keys:
         if opts.get(k):
             default_keys[k] = opts.get(k)
 
-    las_object = LasPoint(las_file_name=source_file_name,
-                          epsg=epsg,
-                          use_attributes=default_keys["extract_attributes"],
-                          overwrite=default_keys["overwrite"])
+    las_object = LasPoint(
+        las_file_name=source_file_name,
+        epsg=epsg,
+        use_attributes=default_keys["extract_attributes"],
+        overwrite=default_keys["overwrite"],
+    )
 
     if "las2shp" in default_keys["methods"] or not os.path.isfile(default_keys["shapefile_name"]):
-        logging.info(" * Need to create a point shapefile first (%s does not exist) ..." %
-                     default_keys["shapefile_name"])
+        logging.info(
+            " * Need to create a point shapefile first (%s does not exist) ..."
+            % default_keys["shapefile_name"]
+        )
         las_object.export2shp(shapefile_name=default_keys["shapefile_name"])
 
     if "las2dem" in "".join(default_keys["methods"]):
-        logging.info(" * Generating DEM from %s." %
-                     default_keys["shapefile_name"])
-        las_object.create_dem(target_file_name=default_keys["tif_prefix"] + "_dem.tif",
-                              src_shp_file_name=default_keys["shapefile_name"],
-                              pixel_size=default_keys["pixel_size"],
-                              interpolate_gap_pixels=default_keys["interpolate_gap_pixels"],
-                              power=default_keys["power"],
-                              radius1=default_keys["radius1"],
-                              radius2=default_keys["radius2"],
-                              smoothing=default_keys["smoothing"],
-                              min_points=default_keys["min_points"],
-                              max_points=default_keys["max_points"]
-                              )
+        logging.info(" * Generating DEM from %s." % default_keys["shapefile_name"])
+        las_object.create_dem(
+            target_file_name=default_keys["tif_prefix"] + "_dem.tif",
+            src_shp_file_name=default_keys["shapefile_name"],
+            pixel_size=default_keys["pixel_size"],
+            interpolate_gap_pixels=default_keys["interpolate_gap_pixels"],
+            power=default_keys["power"],
+            radius1=default_keys["radius1"],
+            radius2=default_keys["radius2"],
+            smoothing=default_keys["smoothing"],
+            min_points=default_keys["min_points"],
+            max_points=default_keys["max_points"],
+        )
 
     if "2tif" in "".join(default_keys["methods"]):
         logging.info(" * Creating GeoTIFFs ...")
         for attr in default_keys["extract_attributes"]:
-            tif_name = "{0}{1}.tif".format(
-                default_keys["tif_prefix"], wattr[attr])
+            tif_name = "{0}{1}.tif".format(default_keys["tif_prefix"], wattr[attr])
             logging.info("   -- Creating %s ..." % tif_name)
-            geo_utils.rasterize(in_shp_file_name=default_keys["shapefile_name"],
-                                out_raster_file_name=tif_name,
-                                interpolate_gap_pixels=False,
-                                pixel_size=default_keys["pixel_size"],
-                                field_name=wattr[attr],
-                                overwrite=default_keys["overwrite"])
+            geo_utils.rasterize(
+                in_shp_file_name=default_keys["shapefile_name"],
+                out_raster_file_name=tif_name,
+                interpolate_gap_pixels=False,
+                pixel_size=default_keys["pixel_size"],
+                field_name=wattr[attr],
+                overwrite=default_keys["overwrite"],
+            )
         logging.info("   -- Done.")
     return True

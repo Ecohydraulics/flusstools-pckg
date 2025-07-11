@@ -1,12 +1,12 @@
-""" This module calls the necessary functions to perform the computation
+"""This module calls the necessary functions to perform the computation
 of degree of clogging.
 """
+
 from .utils import *
 
 
 def degree_clogging(df_samples, output_csv_path, plot=[False, False]):
-    """
-    Function for computing degree of clogging using the input riverbed parameter along the riverbed depth:
+    """Function for computing degree of clogging using the input riverbed parameter along the riverbed depth:
         + Fine Sediment Saare/Fraction (fsf/fss): [%]
         + Hydraulic Conductivity (kf): [m/s]
         + Porosity (n): [-]
@@ -22,6 +22,7 @@ def degree_clogging(df_samples, output_csv_path, plot=[False, False]):
 
     Returns:
         None
+
     """
     # Take list of probes as tuples
     df_par = df_samples.drop(["id"], axis=1)
@@ -50,36 +51,47 @@ def degree_clogging(df_samples, output_csv_path, plot=[False, False]):
         dc_mu_desfuzzy, dc_mu_desfuzzy_values = apply_fuzzy_rules(dc_af, dc_desfuzzy_funs)
 
         # Defuzzification
-        aggregated = np.fmax(dc_mu_desfuzzy["mu_sc"],
-                             np.fmax(dc_mu_desfuzzy["mu_mc"], dc_mu_desfuzzy["mu_nc"]))
+        aggregated = np.fmax(
+            dc_mu_desfuzzy["mu_sc"], np.fmax(dc_mu_desfuzzy["mu_mc"], dc_mu_desfuzzy["mu_nc"])
+        )
 
         # Calculate defuzzified result
-        degree_of_clogging = fuzz.defuzz(dc_param_range["doc"], aggregated, 'centroid')
-        activation = fuzz.interp_membership(dc_param_range["doc"], aggregated, degree_of_clogging)  # for plot
+        degree_of_clogging = fuzz.defuzz(dc_param_range["doc"], aggregated, "centroid")
+        activation = fuzz.interp_membership(
+            dc_param_range["doc"], aggregated, degree_of_clogging
+        )  # for plot
 
         # Compute sigmoid centroids to new scale of desfuzzy functions
         dic_desfuzzy_centroids = find_centroids(dc_desfuzzy_funs, dc_param_range)
 
         # Correct degree of clogging into new scale
-        degree_of_clogging_corrected = correct_degree_of_clogging(dic_desfuzzy_centroids, degree_of_clogging)
+        degree_of_clogging_corrected = correct_degree_of_clogging(
+            dic_desfuzzy_centroids, degree_of_clogging
+        )
 
         # save computed values into a dataframe
-        df_samples = add_results(df_samples,
-                                 step,
-                                 degree_of_clogging_corrected,
-                                 degree_of_clogging,
-                                 dc_mu_desfuzzy_values,
-                                 dc_af
-                                 )
+        df_samples = add_results(
+            df_samples,
+            step,
+            degree_of_clogging_corrected,
+            degree_of_clogging,
+            dc_mu_desfuzzy_values,
+            dc_af,
+        )
 
         # Plot aggregation of areas and crisp values (degree of clogging)
-        plot_aggregation(dc_param_range, dc_mu_desfuzzy,
-                         dc_desfuzzy_funs, activation,
-                         degree_of_clogging, aggregated, step) if plot[0] else None
+        plot_aggregation(
+            dc_param_range,
+            dc_mu_desfuzzy,
+            dc_desfuzzy_funs,
+            activation,
+            degree_of_clogging,
+            aggregated,
+            step,
+        ) if plot[0] else None
 
     # Plot membership functions
     plot_funs(dc_param_range, dc_fuzzy_funs, dc_desfuzzy_funs) if plot[1] else None
 
     # save the computed values into a csv
     df_samples.to_csv(output_csv_path)
-

@@ -4,10 +4,12 @@
 Example use: ``create_shortest_path(shp_file_name, start_node_id, end_node_id)``
 """
 
-import networkx as nx
-from .geotools import *
 import json
+
+import networkx as nx
 from shapely.geometry import asLineString, asMultiPoint
+
+from .geotools import *
 
 
 def create_shortest_path(line_shp_name, start_node_id, end_node_id):
@@ -20,28 +22,30 @@ def create_shortest_path(line_shp_name, start_node_id, end_node_id):
 
     Returns:
         None: Creates a graph of nodes (coordinate pairs) connecting a start node with an end node in the defined ``line_shp_name``.
-    """
 
+    """
     # load shapefile
     nx_load_shp = nx.read_shp(line_shp_name)
 
     # with not all graphs connected, take the largest connected subgraph by using the connected_component_subgraphs function.
-    nx_list_subgraph = list(nx.connected_component_subgraphs(
-        nx_load_shp.to_undirected()))[0]
+    nx_list_subgraph = list(nx.connected_component_subgraphs(nx_load_shp.to_undirected()))[0]
 
     # get all the nodes in the network
     nx_nodes = np.array(nx_list_subgraph.nodes())
 
     # output the nodes to a GeoJSON file
     network_nodes = asMultiPoint(nx_nodes)
-    write_geojson(line_shp_name.split(".shp")[0] + "_nodes.geojson",
-                  network_nodes.__geo_interface__)
+    write_geojson(
+        line_shp_name.split(".shp")[0] + "_nodes.geojson", network_nodes.__geo_interface__
+    )
 
     # Compute the shortest path. Dijkstra's algorithm.
-    nx_short_path = nx.shortest_path(nx_list_subgraph,
-                                     source=tuple(nx_nodes[start_node_id]),
-                                     target=tuple(nx_nodes[end_node_id]),
-                                     weight='distance')
+    nx_short_path = nx.shortest_path(
+        nx_list_subgraph,
+        source=tuple(nx_nodes[start_node_id]),
+        target=tuple(nx_nodes[end_node_id]),
+        weight="distance",
+    )
 
     # create numpy array of coordinates representing result path
     nx_array_path = get_full_path(nx_short_path, nx_list_subgraph)
@@ -49,8 +53,9 @@ def create_shortest_path(line_shp_name, start_node_id, end_node_id):
     # convert numpy array to Shapely Linestring
     shortest_path = asLineString(nx_array_path)
 
-    write_geojson(line_shp_name.split(".shp")[0] + "_Xpath.geojson",
-                  shortest_path.__geo_interface__)
+    write_geojson(
+        line_shp_name.split(".shp")[0] + "_Xpath.geojson", shortest_path.__geo_interface__
+    )
 
 
 def get_path(n0, n1, nx_list_subgraph):
@@ -63,8 +68,9 @@ def get_path(n0, n1, nx_list_subgraph):
 
     Returns:
         ndarray: An array of point coordinates along the line linking these two nodes.
+
     """
-    return np.array(json.loads(nx_list_subgraph[n0][n1]['Json'])['coordinates'])
+    return np.array(json.loads(nx_list_subgraph[n0][n1]["Json"])["coordinates"])
 
 
 def get_full_path(path, nx_list_subgraph):
@@ -76,14 +82,15 @@ def get_full_path(path, nx_list_subgraph):
 
     Returns:
         ndarray: Coordinate pairs along a path.
+
     """
     p_list = []
     curp = None
-    for i in range(len(path)-1):
-        p = get_path(path[i], path[i+1], nx_list_subgraph)
+    for i in range(len(path) - 1):
+        p = get_path(path[i], path[i + 1], nx_list_subgraph)
         if curp is None:
             curp = p
-        if np.sum((p[0]-curp)**2) > np.sum((p[-1]-curp)**2):
+        if np.sum((p[0] - curp) ** 2) > np.sum((p[-1] - curp) ** 2):
             p = p[::-1, :]
         p_list.append(p)
         curp = p[-1]
@@ -99,6 +106,7 @@ def write_geojson(outfilename, indata):
 
     Returns:
         Creates a new GeoJSON file.
+
     """
     with open(outfilename, "w") as file_out:
         file_out.write(json.dumps(indata))

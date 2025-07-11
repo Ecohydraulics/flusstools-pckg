@@ -1,9 +1,11 @@
 from geotools import *
-from shapely.geometry import Point
 from scipy import interpolate
+from shapely.geometry import Point
 
 
-def interp_z2shp(df, lonlat, crs, sample_column, interp_at_z_stamps, new_attr_names, meas_at_cols, path_shp):
+def interp_z2shp(
+    df, lonlat, crs, sample_column, interp_at_z_stamps, new_attr_names, meas_at_cols, path_shp
+):
     """Interpolates vertical riverbed measurements (e.g., kf, IDOS) to desired z (vertical) stamps, enters them as attributes
     for creating a point shapefile
 
@@ -31,19 +33,19 @@ def interp_z2shp(df, lonlat, crs, sample_column, interp_at_z_stamps, new_attr_na
         sample_array_depth = sample_df[z_stamps].to_numpy()
         f = interpolate.interp1d(sample_array_depth, sample_array, bounds_error=False)
         value_new = f(interp_at_z_stamps)
-        dict_to_conv = dict(zip(new_attr_names, list(value_new)))
-        dict_to_conv.update({'lat': sample_df[lat].iloc[0],
-                             'lon': sample_df[lon].iloc[0]})
+        dict_to_conv = dict(zip(new_attr_names, list(value_new), strict=False))
+        dict_to_conv.update({"lat": sample_df[lat].iloc[0], "lon": sample_df[lon].iloc[0]})
         value_new_per_sample = pd.DataFrame(dict_to_conv, index=[sam])
         standard_df = pd.concat([standard_df, value_new_per_sample])
 
     # df to gdf
-    standard_df['geometry'] = standard_df.apply(lambda x: Point((float(x.lon), float(x.lat))), axis=1)
-    gdf = gpd.GeoDataFrame(standard_df, geometry='geometry')
+    standard_df["geometry"] = standard_df.apply(
+        lambda x: Point((float(x.lon), float(x.lat))), axis=1
+    )
+    gdf = gpd.GeoDataFrame(standard_df, geometry="geometry")
     gdf.crs = crs
 
     # gdf to shp
-    gdf.to_file(path_shp, driver='ESRI Shapefile', index=True)
+    gdf.to_file(path_shp, driver="ESRI Shapefile", index=True)
 
     return gdf
-

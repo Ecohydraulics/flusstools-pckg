@@ -1,8 +1,8 @@
 """``geotools`` is a package for creating, modifying, and transforming geospatial datasets."""
 
-
 from .kml import *
 from .srs_mgmt import *
+
 gdal.UseExceptions()
 
 
@@ -15,10 +15,9 @@ def float2int(raster_file_name, band_number=1):
 
     Returns:
         str: ``"path/to/ew_raster_file.tif"``
-    """
 
-    raster, array, geo_transform = raster2array(
-        raster_file_name, band_number=band_number)
+    """
+    raster, array, geo_transform = raster2array(raster_file_name, band_number=band_number)
     try:
         array = array.astype(int)
     except ValueError:
@@ -34,8 +33,13 @@ def float2int(raster_file_name, band_number=1):
 
     # create integer raster
     print(" * info: creating integer raster to Polygonize:\n   >> %s" % new_name)
-    create_raster(new_name, array, epsg=int(src_srs.GetAuthorityCode(None)),
-                  rdtype=gdal.GDT_Int32, geo_info=geo_transform)
+    create_raster(
+        new_name,
+        array,
+        epsg=int(src_srs.GetAuthorityCode(None)),
+        rdtype=gdal.GDT_Int32,
+        geo_info=geo_transform,
+    )
     return new_name
 
 
@@ -48,10 +52,10 @@ def raster2line(raster_file_name, out_shp_fn, pixel_value, max_distance_method="
         pixel_value (``int`` or ``float``): Pixel values to connect.
         max_distance_method (str): change to (pixel) ``"width"`` or ``"height"`` to force lines to exactly follow pixels (no triangulation).
 
-     Returns:
+    Returns:
         None: Writes a new shapefile to disk.
-    """
 
+    """
     # calculate max. distance between points
     # ensures correct neighbourhoods for start and end pts of lines
     raster, array, geo_transform = raster2array(raster_file_name)
@@ -71,8 +75,9 @@ def raster2line(raster_file_name, out_shp_fn, pixel_value, max_distance_method="
     trajectory = np.where(array == pixel_value)
     if np.count_nonzero(trajectory) == 0:
         logging.error(
-            "! The defined pixel_value (%s) does not occur in the raster band." % str(pixel_value))
-        return None
+            "! The defined pixel_value (%s) does not occur in the raster band." % str(pixel_value)
+        )
+        return
 
     # convert pixel offset to coordinates and append to nested list of points
     points = []
@@ -98,8 +103,7 @@ def raster2line(raster_file_name, out_shp_fn, pixel_value, max_distance_method="
             multi_line.AddGeometry(line)
 
     # write multiline (wkbMultiLineString2shp) to shapefile
-    new_shp = create_shp(
-        out_shp_fn, layer_name="raster_pts", layer_type="line")
+    new_shp = create_shp(out_shp_fn, layer_name="raster_pts", layer_type="line")
     lyr = new_shp.GetLayer()
     feature_def = lyr.GetLayerDefn()
     new_line_feat = ogr.Feature(feature_def)
@@ -122,8 +126,9 @@ def raster2polygon(file_name, out_shp_fn, band_number=1, field_name="values"):
         field_name (str): Field name where raster pixel values will be stored (default: ``"values"``)
         add_area (bool): If ``True``, an "area" field will be added, where the area in the shapefiles unit system is calculated (default: ``False``)
 
-     Returns:
+    Returns:
         osgeo.ogr.DataSource: Python object of the provided ``out_shp_fn``.
+
     """
     logging.info(" * Polygonizing %s ..." % str(file_name))
     # ensure that the input raster contains integer values only and open the input raster
@@ -131,8 +136,7 @@ def raster2polygon(file_name, out_shp_fn, band_number=1, field_name="values"):
     raster, raster_band = open_raster(file_name, band_number=band_number)
 
     # create new shapefile with the create_shp function
-    new_shp = create_shp(
-        out_shp_fn, layer_name="raster_data", layer_type="polygon")
+    new_shp = create_shp(out_shp_fn, layer_name="raster_data", layer_type="polygon")
     dst_layer = new_shp.GetLayer()
 
     # create new field to define values
@@ -149,8 +153,16 @@ def raster2polygon(file_name, out_shp_fn, band_number=1, field_name="values"):
     return new_shp
 
 
-def rasterize(in_shp_file_name, out_raster_file_name, pixel_size=10, no_data_value=-9999,
-              rdtype=gdal.GDT_Float32, overwrite=True, interpolate_gap_pixels=False, **kwargs):
+def rasterize(
+    in_shp_file_name,
+    out_raster_file_name,
+    pixel_size=10,
+    no_data_value=-9999,
+    rdtype=gdal.GDT_Float32,
+    overwrite=True,
+    interpolate_gap_pixels=False,
+    **kwargs,
+):
     """Converts any ESRI shapefile to a raster.
 
     Args:
@@ -180,30 +192,30 @@ def rasterize(in_shp_file_name, out_raster_file_name, pixel_size=10, no_data_val
 
     Returns:
         int: Creates the GeoTIFF raster defined with ``out_raster_file_name`` (success: ``0``, otherwise ``None``).
+
     """
+    default_keys = {
+        "radius1": -1,
+        "radius2": -1,
+        "power": 1.0,
+        "smoothing": 0.0,
+        "min_points": 0,
+        "max_points": 0,
+    }
 
-    default_keys = {"radius1": -1,
-                    "radius2": -1,
-                    "power": 1.0,
-                    "smoothing": 0.0,
-                    "min_points": 0,
-                    "max_points": 0,
-                    }
-
-    for k in default_keys.keys():
+    for k in default_keys:
         if kwargs.get(k):
             default_keys[k] = str(kwargs.get(k))
 
     # check if any action is required
     if os.path.isfile(out_raster_file_name) and not overwrite:
-        logging.info(" * %s already exists. Nothing to do." %
-                     out_raster_file_name)
+        logging.info(" * %s already exists. Nothing to do." % out_raster_file_name)
         return None
 
     # open data source
     try:
         source_ds = ogr.Open(in_shp_file_name)
-    except RuntimeError as err:
+    except RuntimeError:
         logging.error("! Could not open %s." % str(in_shp_file_name))
         return None
     source_lyr = source_ds.GetLayer()
@@ -219,37 +231,45 @@ def rasterize(in_shp_file_name, out_raster_file_name, pixel_size=10, no_data_val
     srs = get_srs(source_ds)
     try:
         srs.ImportFromEPSG(int(srs.GetAuthorityCode(None)))
-    except RuntimeError as err:
+    except RuntimeError:
         logging.error(e)
         return None
 
     if float(pixel_size) < 1.0:
         logging.info(
-            "   -- Yeek! This will be a high resolution raster. Be prepared that your system resources will be occupied for a while.")
+            "   -- Yeek! This will be a high resolution raster. Be prepared that your system resources will be occupied for a while."
+        )
 
     # use gdal.Grid if gap interpolation (fill void pixels) is True
     if interpolate_gap_pixels:
         logging.info(
-            " * Creating gridded raster with interpolated values for empty pixels from neighbouring pixels ...")
+            " * Creating gridded raster with interpolated values for empty pixels from neighbouring pixels ..."
+        )
         logging.info(
-            "   -- Note: to deactivate pixel value interpolation option use interpolate_gap_pixels=False")
+            "   -- Note: to deactivate pixel value interpolation option use interpolate_gap_pixels=False"
+        )
 
         try:
             algorithm = "invdist:power={0}:radius1={1}:radius2={2}:smoothing={3}:min_points={4}:max_points={5}".format(
-                str(default_keys["power"]), str(
-                    default_keys["radius1"]), str(default_keys["radius2"]),
-                str(default_keys["smoothing"]), str(
-                    default_keys["min_points"]), str(default_keys["max_points"])
+                str(default_keys["power"]),
+                str(default_keys["radius1"]),
+                str(default_keys["radius2"]),
+                str(default_keys["smoothing"]),
+                str(default_keys["min_points"]),
+                str(default_keys["max_points"]),
             )
 
-            gdal.Grid(out_raster_file_name, in_shp_file_name,
-                      algorithm=algorithm,
-                      zfield=kwargs.get("field_name"),
-                      outputType=rdtype,
-                      outputSRS=srs,
-                      width=x_res,
-                      height=y_res,
-                      outputBounds=[x_min, y_min, x_max, y_max])
+            gdal.Grid(
+                out_raster_file_name,
+                in_shp_file_name,
+                algorithm=algorithm,
+                zfield=kwargs.get("field_name"),
+                outputType=rdtype,
+                outputSRS=srs,
+                width=x_res,
+                height=y_res,
+                outputBounds=[x_min, y_min, x_max, y_max],
+            )
             return 0
 
         except KeyError:
@@ -260,9 +280,10 @@ def rasterize(in_shp_file_name, out_raster_file_name, pixel_size=10, no_data_val
 
     # create destination data source (GeoTIff raster)
     try:
-        target_ds = gdal.GetDriverByName('GTiff').Create(
-            out_raster_file_name, x_res, y_res, 1, eType=rdtype)
-    except RuntimeError as err:
+        target_ds = gdal.GetDriverByName("GTiff").Create(
+            out_raster_file_name, x_res, y_res, 1, eType=rdtype
+        )
+    except RuntimeError:
         logging.error("! Could not create %s." % str(out_raster_file_name))
         return None
     target_ds.SetGeoTransform((x_min, pixel_size, 0, y_max, 0, -pixel_size))
@@ -277,14 +298,27 @@ def rasterize(in_shp_file_name, out_raster_file_name, pixel_size=10, no_data_val
     # int burn_values=0, options=None, GDALProgressFunc callback=0, callback_data=None)
     try:
         if kwargs.get("field_name"):
-            gdal.RasterizeLayer(target_ds, [1], source_lyr, None, None, burn_values=[0],
-                                options=["ALL_TOUCHED=TRUE", "ATTRIBUTE=" + str(kwargs.get("field_name"))])
+            gdal.RasterizeLayer(
+                target_ds,
+                [1],
+                source_lyr,
+                None,
+                None,
+                burn_values=[0],
+                options=["ALL_TOUCHED=TRUE", "ATTRIBUTE=" + str(kwargs.get("field_name"))],
+            )
         else:
-            gdal.RasterizeLayer(target_ds, [1], source_lyr, None, None, burn_values=[0],
-                                options=["ALL_TOUCHED=TRUE"])
-    except RuntimeError as err:
-        logging.error("! Could not rasterize (burn values from %s)." %
-                      str(in_shp_file_name))
+            gdal.RasterizeLayer(
+                target_ds,
+                [1],
+                source_lyr,
+                None,
+                None,
+                burn_values=[0],
+                options=["ALL_TOUCHED=TRUE"],
+            )
+    except RuntimeError:
+        logging.error("! Could not rasterize (burn values from %s)." % str(in_shp_file_name))
         return None
 
     # release raster band

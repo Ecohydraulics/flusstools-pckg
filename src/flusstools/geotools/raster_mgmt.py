@@ -11,6 +11,7 @@ def open_raster(file_name, band_number=1):
     Returns:
         osgeo.gdal.Dataset: A raster dataset a Python object.
         osgeo.gdal.Band: The defined raster band as Python object.
+
     """
     gdal.UseExceptions()
     # open raster file or return None if not accessible
@@ -30,9 +31,21 @@ def open_raster(file_name, band_number=1):
     return raster, raster_band
 
 
-def create_raster(file_name, raster_array, bands=1, origin=None, epsg=4326, pixel_width=10., pixel_height=10.,
-                  nan_val=nan_value, rdtype=gdal.GDT_Float32, geo_info=False, rotation_angle=None, shear_pixels=True,
-                  options=["PROFILE=GeoTIFF"]):
+def create_raster(
+    file_name,
+    raster_array,
+    bands=1,
+    origin=None,
+    epsg=4326,
+    pixel_width=10.0,
+    pixel_height=10.0,
+    nan_val=nan_value,
+    rdtype=gdal.GDT_Float32,
+    geo_info=False,
+    rotation_angle=None,
+    shear_pixels=True,
+    options=["PROFILE=GeoTIFF"],
+):
     """Converts an ``ndarray`` (``numpy.array``) to a GeoTIFF raster.
 
     Args:
@@ -55,6 +68,7 @@ def create_raster(file_name, raster_array, bands=1, origin=None, epsg=4326, pixe
 
     Hint:
         For processing airborne imagery, the ``rotation_angle`` corresponds to the bearing angle of the aircraft with reference to true, not magnetic North.
+
     """
     gdal.UseExceptions()
     # check out driver
@@ -76,9 +90,8 @@ def create_raster(file_name, raster_array, bands=1, origin=None, epsg=4326, pixe
 
     try:
         logging.info(" * creating new raster with %1i bands ..." % bands)
-        new_raster = driver.Create(
-            file_name, cols, rows, bands, eType=rdtype, options=options)
-    except RuntimeError as e:
+        new_raster = driver.Create(file_name, cols, rows, bands, eType=rdtype, options=options)
+    except RuntimeError:
         logging.error("Could not create %s." % str(file_name))
         return -1
 
@@ -89,15 +102,16 @@ def create_raster(file_name, raster_array, bands=1, origin=None, epsg=4326, pixe
             origin_y = origin[1]
         except IndexError:
             logging.error(
-                "Wrong origin format (required: (INT, INT) - provided: %s)." % str(origin))
+                "Wrong origin format (required: (INT, INT) - provided: %s)." % str(origin)
+            )
             return -1
         if rotation_angle:
             try:
-                logging.info(" * rotating image by %0.2f deg" %
-                             float(rotation_angle))
+                logging.info(" * rotating image by %0.2f deg" % float(rotation_angle))
             except ValueError:
                 logging.error(
-                    "The provided rotation angle is not a number. Re-try with a numeric rotation angle (in degrees).")
+                    "The provided rotation angle is not a number. Re-try with a numeric rotation angle (in degrees)."
+                )
                 return -1
             rotation_angle = np.deg2rad(rotation_angle)
             x_rotation = -1 * pixel_width * np.sin(rotation_angle)
@@ -106,15 +120,17 @@ def create_raster(file_name, raster_array, bands=1, origin=None, epsg=4326, pixe
                 pixel_width = pixel_width * np.cos(rotation_angle)
                 pixel_height = pixel_height * np.sin(rotation_angle)
         else:
-            x_rotation = 0.
-            y_rotation = 0.
+            x_rotation = 0.0
+            y_rotation = 0.0
 
         try:
             new_raster.SetGeoTransform(
-                (origin_x, pixel_width, x_rotation, origin_y, y_rotation, -pixel_height))
-        except RuntimeError as e:
+                (origin_x, pixel_width, x_rotation, origin_y, y_rotation, -pixel_height)
+            )
+        except RuntimeError:
             logging.error(
-                "Invalid origin (must be INT) or pixel_height/pixel_width (must be INT) provided.")
+                "Invalid origin (must be INT) or pixel_height/pixel_width (must be INT) provided."
+            )
             return -1
     else:
         try:
@@ -132,7 +148,7 @@ def create_raster(file_name, raster_array, bands=1, origin=None, epsg=4326, pixe
             write_array = raster_array
         # replace np.nan values
         write_array[np.isnan(write_array)] = nan_val
-        band = new_raster.GetRasterBand(b+1)
+        band = new_raster.GetRasterBand(b + 1)
         band.SetNoDataValue(nan_val)
         band.WriteArray(write_array)
         band.SetScale(1.0)
@@ -152,8 +168,17 @@ def create_raster(file_name, raster_array, bands=1, origin=None, epsg=4326, pixe
     return 0
 
 
-def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32, nan_val=nan_value,
-                    compress=True, options=['PROFILE=GeoTIFF'], compress_config=["COMPRESS=LZW", "TILED=YES"]):
+def xy_raster_shift(
+    file_name,
+    x_shift,
+    y_shift,
+    bands=1,
+    rdtype=gdal.GDT_Float32,
+    nan_val=nan_value,
+    compress=True,
+    options=["PROFILE=GeoTIFF"],
+    compress_config=["COMPRESS=LZW", "TILED=YES"],
+):
     """Creates new geotiff raster with shifts in x and y direction. If enabled compresses it also compresses file.
 
     Args:
@@ -175,6 +200,7 @@ def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32
     bands=4 (rgba) rdtype=gdal.GDT_Byte nan_val=0 options=['PROFILE=GeoTIFF','PHOTOMETRIC=RGB'])
 
     Bugs: Issues displaying logging
+
     """
     # Gdal opens Tiff
     try:
@@ -188,10 +214,9 @@ def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32
 
     # Extracting arrays from raster to create an array list
     try:
-        list_array=[]
+        list_array = []
         for n in range(bands):
-
-            list_array.append(tif.GetRasterBand(n+1).ReadAsArray())
+            list_array.append(tif.GetRasterBand(n + 1).ReadAsArray())
     except RuntimeError:
         logging.error("Cannot create array list from bands.")
         return -1
@@ -202,46 +227,56 @@ def xy_raster_shift(file_name,x_shift, y_shift, bands=1, rdtype=gdal.GDT_Float32
         origin_y = geo_transform[3]
         pixel_width = geo_transform[1]
         pixel_height = geo_transform[5]
-        pixel_height = pixel_height * -1 # setting negative so raster is not mirrored over y-intercept, due to create_raster's "*-1 pixelheight"
+        pixel_height = (
+            pixel_height * -1
+        )  # setting negative so raster is not mirrored over y-intercept, due to create_raster's "*-1 pixelheight"
         proj = osr.SpatialReference(tif.GetProjection())
-        epsg = int(proj.GetAttrValue('AUTHORITY', 1))
+        epsg = int(proj.GetAttrValue("AUTHORITY", 1))
     except ValueError:
-        logging.error(
-            "Problems with geodata")
+        logging.error("Problems with geodata")
 
     try:
         logging.info(
-            "Creating raster with x shift of {0} units  and y shift of {1} units" .format(
-                 float(x_shift),float(y_shift)))
+            f"Creating raster with x shift of {float(x_shift)} units  and y shift of {float(y_shift)} units"
+        )
 
     except ValueError:
-        logging.error(
-            "The provided x and y shifts are not numbers.")
+        logging.error("The provided x and y shifts are not numbers.")
         return -1
     # Gdal Shift
     origin = (origin_x + x_shift, origin_y + y_shift)
-    file_name_new = file_name.replace(".tif", "shifted x_{0} y_{1}.tif".format(x_shift, y_shift))
+    file_name_new = file_name.replace(".tif", f"shifted x_{x_shift} y_{y_shift}.tif")
 
     try:
-        create_raster(file_name_new, list_array, bands, origin, epsg, pixel_width, pixel_height, nan_val=nan_val,
-                           rdtype=rdtype, options=options)
-        logging.info("Successfully created shifted raster in "+file_name_new)
+        create_raster(
+            file_name_new,
+            list_array,
+            bands,
+            origin,
+            epsg,
+            pixel_width,
+            pixel_height,
+            nan_val=nan_val,
+            rdtype=rdtype,
+            options=options,
+        )
+        logging.info("Successfully created shifted raster in " + file_name_new)
     except RuntimeError:
         logging.error("Could not create raster using geotools.")
         return -1
 
-
     if compress:
         try:
             logging.info("Creating compressed raster to reduce size")
-            outfn=file_name_new.replace(".tif", "_compressed.tif")
+            outfn = file_name_new.replace(".tif", "_compressed.tif")
             ds = gdal.Translate(outfn, file_name_new, creationOptions=compress_config)
             ds = None
-            logging.info("Successfully created compressed tiff in "+outfn)
+            logging.info("Successfully created compressed tiff in " + outfn)
         except RuntimeError:
             logging.error("Unable to preform compression")
 
     return 0
+
 
 def raster2array(file_name, band_number=1):
     """Extracts a numpy ``ndarray`` from a raster.
@@ -255,6 +290,7 @@ def raster2array(file_name, band_number=1):
         ``numpy.ndarray`` of the raster ``band_numer`` (input) where no-data
         values are replaced with ``np.nan``, ``osgeo.GeoTransform`` of
          the original raster]
+
     """
     # open the raster and band (see above)
     raster, band = open_raster(file_name, band_number=band_number)
@@ -262,16 +298,13 @@ def raster2array(file_name, band_number=1):
         # read array data from band
         band_array = band.ReadAsArray()
     except AttributeError:
-        logging.error("Could not read array of raster band type=%s." %
-                      str(type(band)))
+        logging.error("Could not read array of raster band type=%s." % str(type(band)))
         return raster, band, nan_value
     try:
         # overwrite NoDataValues with np.nan
-        band_array = np.where(
-            band_array == band.GetNoDataValue(), np.nan, band_array)
+        band_array = np.where(band_array == band.GetNoDataValue(), np.nan, band_array)
     except AttributeError:
-        logging.error(
-            "Could not get NoDataValue of raster band type=%s." % str(type(band)))
+        logging.error("Could not get NoDataValue of raster band type=%s." % str(type(band)))
         return raster, band, nan_value
     # return the array and GeoTransformation used in the original raster
     return raster, band_array, raster.GetGeoTransform()
@@ -285,6 +318,7 @@ def remove_tif(file_name):
 
     Returns:
         None: Removes the provided ``file_name`` and all dependencies.
+
     """
     for file in glob.glob("%s*" % file_name.split(".tif")[0]):
         try:
@@ -305,5 +339,6 @@ def clip_raster(polygon, in_raster, out_raster):
 
     Returns:
         None: Creates a new, clipped raster defined with ``out_raster``.
+
     """
     gdal.Warp(out_raster, in_raster, cutlineDSName=polygon)

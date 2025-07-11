@@ -1,6 +1,6 @@
 """Global variables"""
-from import_mgmt import *
 
+from import_mgmt import *
 
 cache_folder = os.path.abspath("") + "/__cache__/"
 nan_value = -9999.0
@@ -20,7 +20,7 @@ gdal_dtype_dict = {
     11: "gdal.GDT_CFloat64",
 }
 
-msg_from_lastools = 'Please note that LAStools is not "free" (see http://lastools.org/LICENSE.txt)\r\ncontact \'martin.isenburg@rapidlasso.com\' to clarify licensing terms if needed.\r\n'
+msg_from_lastools = "Please note that LAStools is not \"free\" (see http://lastools.org/LICENSE.txt)\r\ncontact 'martin.isenburg@rapidlasso.com' to clarify licensing terms if needed.\r\n"
 
 sql_command = """
 CREATE TABLE IF NOT EXISTS plants (

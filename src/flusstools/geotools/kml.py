@@ -1,7 +1,6 @@
 """Modified script (original: Linwood Creekmore III)
 
 Examples:
-
     output to geopandas dataframe (gdf):
     ``gdf = kmx2other("my-places.kmz", output="gpd")``
 
@@ -10,11 +9,13 @@ Examples:
 
     convert a kml-file to a shapefile
     ``success = kmx2other("my-places.kml", output="shp")``
+
 """
 
 # from io import BytesIO, StringIO
-from zipfile import ZipFile
 import re
+from zipfile import ZipFile
+
 from .kmx_parser import *
 
 
@@ -22,22 +23,25 @@ def kmx2other(file, output="df"):
     """Converts a Keyhole Markup Language Zipped (KMZ) or KML file to a pandas dataframe, geopandas geodataframe,
     csv, geojson, or ESRI shapefile.
 
-    Parameters:
+    Parameters
+    ----------
         file (str): The  path to a KMZ or KML file.
         output (str): Defines the output type. Valid options are: ``"shapefile"``, ``"shp"``, ``"shapefile"``, or ``"ESRI Shapefile"``.
 
     Hint:
             The core function is taken from http://programmingadvent.blogspot.com/2013/06/kmzkml-file-parsing-with-python.html
 
-    Returns:
+    Returns
+    -------
         str: Success message (use ``print(kmx2other(...))`` to see what the function did.)
+
     """
-    r = re.compile(r"(?<=\.)km+[lz]?", re.I)
+    r = re.compile(r"(?<=\.)km+[lz]?", re.IGNORECASE)
     try:
         # alternatively, try (re.findall(r"(?<=\.)[\w]+",file))[-1]
         extension = r.search(file).group(0)
-    except IOError as e:
-        logging.error("I/O error {0}".format(e))
+    except OSError as e:
+        logging.error(f"I/O error {e}")
         return -1
 
     # create buffer file
@@ -50,8 +54,7 @@ def kmx2other(file, output="df"):
         sel = v_match(name_array)
         buffer = kmz.open(name_array[sel][0], "r")
     else:
-        raise ValueError(
-            "Incorrect file format provided. Retry with a valid KML or KMZ file.")
+        raise ValueError("Incorrect file format provided. Retry with a valid KML or KMZ file.")
 
     # instantiate file parser and handler
     parser = xml.sax.make_parser()
@@ -83,32 +86,34 @@ def kmx2other(file, output="df"):
     elif output == "csv":
         out_filename = file[:-3] + "csv"
         df.to_csv(out_filename, encoding="utf-8", sep="\t")
-        result = ("Successfully converted {0} to CSV (written to disk: {1}".format(
-            file, out_filename))
+        result = f"Successfully converted {file} to CSV (written to disk: {out_filename}"
 
-    elif (output == "gpd") or (output == "gdf") or (output == "geoframe") or (output == "geodataframe"):
-        geos = geopandas.GeoDataFrame(
-            df.apply(PlacemarkHandler.spatializer, axis=1))
+    elif (
+        (output == "gpd")
+        or (output == "gdf")
+        or (output == "geoframe")
+        or (output == "geodataframe")
+    ):
+        geos = geopandas.GeoDataFrame(df.apply(PlacemarkHandler.spatializer, axis=1))
         result = geopandas.GeoDataFrame(pd.concat([df, geos], axis=1))
 
     elif (output == "geojson") or (output == "json"):
-        geos = geopandas.GeoDataFrame(
-            df.apply(PlacemarkHandler.spatializer, axis=1))
+        geos = geopandas.GeoDataFrame(df.apply(PlacemarkHandler.spatializer, axis=1))
         gdf = geopandas.GeoDataFrame(pd.concat([df, geos], axis=1))
         out_filename = file[:-3] + "geojson"
         gdf.to_file(out_filename, driver="GeoJSON")
-        validation = geojson.is_valid(
-            geojson.load(open(out_filename)))["valid"]
+        validation = geojson.is_valid(geojson.load(open(out_filename)))["valid"]
         if validation == "yes":
-            result = ("Successfully converted {0} to GeoJSON and output to  disk at {1}".format(
-                file, out_filename))
+            result = (
+                f"Successfully converted {file} to GeoJSON and output to  disk at {out_filename}"
+            )
         else:
             raise ValueError(
-                "Geojson conversion failed. Try to clean the input data or another file.")
+                "Geojson conversion failed. Try to clean the input data or another file."
+            )
 
     elif (output == "shapefile") or (output == "shp") or (output == "esri shapefile"):
-        geos = geopandas.GeoDataFrame(
-            df.apply(PlacemarkHandler.spatializer, axis=1))
+        geos = geopandas.GeoDataFrame(df.apply(PlacemarkHandler.spatializer, axis=1))
         gdf = geopandas.GeoDataFrame(pd.concat([df, geos], axis=1))
         out_filename = file[:-3] + "shp"
         gdf.to_file(out_filename, driver="ESRI Shapefile")
@@ -119,13 +124,16 @@ def kmx2other(file, output="df"):
         else:
             validation = "no"
         if validation == "yes":
-            result = ("Successfully converted {0} to Shapefile and output to disk at {1}".format(
-                file, out_filename))
+            result = (
+                f"Successfully converted {file} to Shapefile and output to disk at {out_filename}"
+            )
         else:
             raise ValueError(
-                "Shapefile conversion did not create a valid shapefile object.\nTry to clean up the input data or another file.")
+                "Shapefile conversion did not create a valid shapefile object.\nTry to clean up the input data or another file."
+            )
     else:
         raise ValueError(
-            "Conversion returned no data; check if a correct output file type was provided.\nValid output types are geojson, shapefile, csv, geodataframe, and/or pandas dataframe.")
+            "Conversion returned no data; check if a correct output file type was provided.\nValid output types are geojson, shapefile, csv, geodataframe, and/or pandas dataframe."
+        )
 
     return result
