@@ -1,7 +1,6 @@
 numpy
 alphashape
 earthpy
-gdal
 geojson
 geopandas
 h5py
