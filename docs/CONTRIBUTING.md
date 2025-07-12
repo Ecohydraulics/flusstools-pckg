@@ -12,8 +12,8 @@ IMPORTANT UPDATE SINCE THE LAST PUSH: WE NEED TO USE A pyproject.toml FILE NOW.
 * Install requirements for developers:
 
 ```sh
-python3 -m pip install --upgrade build
-python3 -m pip install --upgrade twine
+pip install --upgrade build
+pip install --upgrade twine
 ```
 
 ## Build and publish
@@ -60,6 +60,9 @@ To enable tokens, create a .pypirc file in the HOME directory with the following
 
 ```sh
 python3 -m twine upload --repository testpypi dist/*
+
+python3 -m twine upload --repository flusstools dist/*
+
 ```
 
 That's it, thanks for contributing - please still test the usage!

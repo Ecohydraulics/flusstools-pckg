@@ -18,7 +18,7 @@ dynamic         = ["version"]
 description     = "A Python toolbox for river and floodplain analysis."
 readme          = "README.md"
 requires-python = ">=3.10"
-license         = { text = "BSD-3-Clause" }
+license         = { file = "LICENSE" }
 authors         = [{ name = "FlussTeam / Hydro‑Informatics", email = "schwindt.water@gmail.com" }]
 keywords = ["rivers", "hydro‑morphology", "geospatial", "gis", "hydraulic‑engineering", "hydroinformatics",
   "numerical", "simulations", "Python", "QGIS", "schwindt"]
@@ -84,6 +84,8 @@ style = [
 # ---------------------------------------------------------------------------
 # Hatch build settings
 # ---------------------------------------------------------------------------
+[tool.hatch.build]
+sources = ["src"]                 # src-layout
 [tool.hatch.build.targets.wheel]
 include = [
   "src/flusstools/**",
@@ -91,6 +93,7 @@ include = [
   "CHANGELOG.md",
   "README.md",
 ]
+packages = ["flusstools"]         # include the whole package tree
 
 
 # ---------------------------------------------------------------------------
