@@ -59,7 +59,7 @@ To enable tokens, create a .pypirc file in the HOME directory with the following
 ### Upload distribution archives
 
 ```sh
-python3 -m twine upload --repository testpypi dist/*
+python3 -m twine upload --repository pypi dist/*
 
 python3 -m twine upload --repository flusstools dist/*
 

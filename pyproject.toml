@@ -14,7 +14,7 @@ build-backend = "hatchling.build"
 # ---------------------------------------------------------------------------
 [project]
 name            = "flusstools"
-dynamic         = ["version"]
+version         = "1.1.14"
 description     = "A Python toolbox for river and floodplain analysis."
 readme          = "README.md"
 requires-python = ">=3.10"
@@ -31,11 +31,6 @@ classifiers     = [
   "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: GIS",
 ]
-
-[tool.hatch.version]
-source       = "vcs"
-tag-pattern  = "^v(?P<version>.*)$"
-
 # ---------------------------------------------------------------------------
 # Runtime dependencies
 # ---------------------------------------------------------------------------
@@ -59,9 +54,14 @@ dependencies = [
     "earthpy>=0.9.4",
     "geojson>=3.2"
 ]
+
 # ---------------------------------------------------------------------------
 # Optional extras
 # ---------------------------------------------------------------------------
+[project.urls]
+"Homepage" = "https://github.com/ecohydraulics/flusstools-docs"
+"Bug Tracker" = "https://github.com/ecohydraulics/flusstools-pckg/issues"
+
 [project.optional-dependencies]
 docs  = [
   "sphinx>=7.3",
