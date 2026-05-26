@@ -1,4 +1,10 @@
-from helpers import *
+import logging
+import os
+
+import alphashape
+import geopandas
+import numpy as np
+from osgeo import ogr
 
 
 def create_shp(shp_file_dir, overwrite=True, *args, **kwargs):
@@ -144,7 +150,7 @@ def get_geom_description(layer):
     try:
         geom_type = layer.GetGeom()
     except AttributeError:
-        logging.error("Invalid input: %s is empty or not osgeo.ogr.Layer." % str(layer))
+        logging.error("Invalid input: %s is empty or not osgeo.ogr.Layer.", str(layer))
         return type_dict[0]
     try:
         return type_dict[geom_type]
@@ -190,9 +196,9 @@ def verify_shp_name(shp_file_name, shorten_to=13):
     pure_fn = shp_file_name.split(".shp")[0].split("/")[-1].split("\\")[-1]
     shp_dir = shp_file_name.strip(shp_file_name.split("/")[-1].split("\\")[-1])
 
-    if pure_fn.__len__() > shorten_to:
+    if len(pure_fn) > shorten_to:
         print(
-            "Shapefile name too long (applying auto-shortening to %s characters)." % str(shorten_to)
+            f"Shapefile name too long (applying auto-shortening to {shorten_to} characters)."
         )
         return shp_dir + pure_fn[0 : shorten_to - 1] + ".shp"
     return shp_file_name

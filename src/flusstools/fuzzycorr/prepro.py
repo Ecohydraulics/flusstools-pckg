@@ -3,7 +3,17 @@
 - already removed: clip_raster, which is a duplicate of raster_mgmt
 """
 
-from geotools import *
+from pathlib import Path
+
+import alphashape
+import geopandas
+import mapclassify.classifiers as mc
+import numpy as np
+import pyproj
+import rasterio as rio
+import shapefile
+from osgeo import gdal, ogr
+from scipy import interpolate
 
 
 class FuzzyPreProcessor:

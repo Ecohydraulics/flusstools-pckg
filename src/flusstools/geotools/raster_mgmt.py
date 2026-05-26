@@ -1,4 +1,11 @@
-from helpers import *
+import glob
+import logging
+import os
+
+import numpy as np
+from osgeo import gdal, osr
+
+from ..var_config import nan_value
 
 
 def open_raster(file_name, band_number=1):
@@ -44,7 +51,7 @@ def create_raster(
     geo_info=False,
     rotation_angle=None,
     shear_pixels=True,
-    options=["PROFILE=GeoTIFF"],
+    options=None,
 ):
     """Converts an ``ndarray`` (``numpy.array``) to a GeoTIFF raster.
 
@@ -71,14 +78,16 @@ def create_raster(
 
     """
     gdal.UseExceptions()
+    if options is None:
+        options = ["PROFILE=GeoTIFF"]
     # check out driver
     driver = gdal.GetDriverByName("GTiff")
 
     # create raster dataset with number of cols and rows of the input array
     try:
         # overwrite number of bands if multiple arrays are provided in a list
-        if type(raster_array) is list:
-            bands = raster_array.__len__()
+        if isinstance(raster_array, list):
+            bands = len(raster_array)
             cols = raster_array[0].shape[1]
             rows = raster_array[0].shape[0]
         else:
@@ -89,10 +98,10 @@ def create_raster(
         return -1
 
     try:
-        logging.info(" * creating new raster with %1i bands ..." % bands)
+        logging.info(" * creating new raster with %1i bands ...", bands)
         new_raster = driver.Create(file_name, cols, rows, bands, eType=rdtype, options=options)
     except RuntimeError:
-        logging.error("Could not create %s." % str(file_name))
+        logging.error("Could not create %s.", str(file_name))
         return -1
 
     # apply geo-origin and pixel dimensions
@@ -102,12 +111,12 @@ def create_raster(
             origin_y = origin[1]
         except IndexError:
             logging.error(
-                "Wrong origin format (required: (INT, INT) - provided: %s)." % str(origin)
+                "Wrong origin format (required: (INT, INT) - provided: %s).", str(origin)
             )
             return -1
         if rotation_angle:
             try:
-                logging.info(" * rotating image by %0.2f deg" % float(rotation_angle))
+                logging.info(" * rotating image by %0.2f deg", float(rotation_angle))
             except ValueError:
                 logging.error(
                     "The provided rotation angle is not a number. Re-try with a numeric rotation angle (in degrees)."
@@ -141,7 +150,7 @@ def create_raster(
 
     # write array contents to band(s)
     for b in range(bands):
-        if type(raster_array) is list:
+        if isinstance(raster_array, list):
             # use array item of list if multiple arrays provided
             write_array = raster_array[b]
         else:
@@ -163,7 +172,7 @@ def create_raster(
         logging.error(e)
         return -1
     new_raster.SetProjection(srs.ExportToWkt())
-    logging.info(" * successfully created %s" % file_name)
+    logging.info(" * successfully created %s", file_name)
 
     return 0
 
@@ -176,8 +185,8 @@ def xy_raster_shift(
     rdtype=gdal.GDT_Float32,
     nan_val=nan_value,
     compress=True,
-    options=["PROFILE=GeoTIFF"],
-    compress_config=["COMPRESS=LZW", "TILED=YES"],
+    options=None,
+    compress_config=None,
 ):
     """Creates new geotiff raster with shifts in x and y direction. If enabled compresses it also compresses file.
 
@@ -202,6 +211,10 @@ def xy_raster_shift(
     Bugs: Issues displaying logging
 
     """
+    if options is None:
+        options = ["PROFILE=GeoTIFF"]
+    if compress_config is None:
+        compress_config = ["COMPRESS=LZW", "TILED=YES"]
     # Gdal opens Tiff
     try:
         tif = gdal.Open(file_name)
@@ -298,13 +311,13 @@ def raster2array(file_name, band_number=1):
         # read array data from band
         band_array = band.ReadAsArray()
     except AttributeError:
-        logging.error("Could not read array of raster band type=%s." % str(type(band)))
+        logging.error("Could not read array of raster band type=%s.", str(type(band)))
         return raster, band, nan_value
     try:
         # overwrite NoDataValues with np.nan
         band_array = np.where(band_array == band.GetNoDataValue(), np.nan, band_array)
     except AttributeError:
-        logging.error("Could not get NoDataValue of raster band type=%s." % str(type(band)))
+        logging.error("Could not get NoDataValue of raster band type=%s.", str(type(band)))
         return raster, band, nan_value
     # return the array and GeoTransformation used in the original raster
     return raster, band_array, raster.GetGeoTransform()
@@ -320,13 +333,13 @@ def remove_tif(file_name):
         None: Removes the provided ``file_name`` and all dependencies.
 
     """
-    for file in glob.glob("%s*" % file_name.split(".tif")[0]):
+    for file in glob.glob(f"{file_name.split('.tif')[0]}*"):
         try:
             os.remove(file)
         except PermissionError:
-            print("WARNING: Could not remove %s (locked by other program)." % file)
+            print(f"WARNING: Could not remove {file} (locked by other program).")
         except FileNotFoundError:
-            print("WARNING: The file %s does not exist." % file)
+            print(f"WARNING: The file {file} does not exist.")
 
 
 def clip_raster(polygon, in_raster, out_raster):

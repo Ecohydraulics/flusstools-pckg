@@ -1,6 +1,10 @@
 """Plotting routines and classes for fuzzy comparison maps"""
 
-from .prepro import *
+import earthpy.plot as ep
+import matplotlib.pyplot as plt
+import numpy as np
+import rasterio as rio
+from matplotlib import colors, patches
 
 
 def read_raster(raster_path):

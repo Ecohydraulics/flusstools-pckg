@@ -1,4 +1,11 @@
-from .dataset_mgmt import *
+import logging
+
+from osgeo import gdal, ogr, osr
+from pyproj import CRS
+
+from .dataset_mgmt import get_layer, verify_dataset
+from .raster_mgmt import create_raster
+from .shp_mgmt import create_shp, get_geom_simplified, verify_shp_name
 
 
 def get_esriwkt(epsg):
@@ -8,35 +15,17 @@ def get_esriwkt(epsg):
         epsg (int): EPSG Authority Code
 
     Returns:
-        str: An esriwkt string (if an error occur, the default epsg=``4326`` is used).
+        str: An esriwkt string (if an error occurs, the default epsg=``4326`` is used).
 
     Example:
         Call this function with ``get_esriwkt(4326)`` to get a return, such as
         ``'GEOGCS["GCS_WGS_1984",DATUM[...],...]``.
 
-    Hint:
-        This function requires an internet connection:
-        Loads spatial reference codes as ``"https://spatialreference.org/ref/sr-org/{0}/esriwkt/".format(epsg)``
-        For instance, ``epsg=3857`` yields ``"https://spatialreference.org/ref/sr-org/3857/esriwkt/"``
-
     """
     try:
-        with urllib.request.urlopen(
-            f"http://spatialreference.org/ref/epsg/{epsg}/esriwkt/"
-        ) as response:
-            return str(response.read()).strip("b").strip("'")
-    except Exception:
-        pass
-    try:
-        with urllib.request.urlopen(
-            f"http://spatialreference.org/ref/sr-org/epsg{epsg}-wgs84-web-mercator-auxiliary-sphere/esriwkt/"
-        ) as response:
-            return str(response.read()).strip("b").strip("'")
-
+        return CRS.from_epsg(int(epsg)).to_wkt(version="WKT1_ESRI")
     except Exception as e:
-        logging.error(
-            "Could not find epsg code on spatialreference.org. Returning default WKT(epsg=4326)."
-        )
+        logging.error("Could not derive ESRI WKT for epsg=%s. Returning default WKT(epsg=4326).", epsg)
         print(e)
         return 'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295],UNIT["Meter",1]]'
 
@@ -60,7 +49,7 @@ def get_srs(dataset):
         try:
             sr = osr.SpatialReference(str(dataset.GetLayer().GetSpatialRef()))
         except AttributeError:
-            logging.error("Invalid source data (%s)." % str(dataset))
+            logging.error("Invalid source data (%s).", str(dataset))
             return osr.SpatialReference()
     # auto-detect epsg
     try:
@@ -228,7 +217,7 @@ def reproject_raster(source_dataset, source_srs, target_srs):
         epsg=int(target_srs.GetAuthorityCode(None)),
         geo_info=tar_dataset.GetGeoTransform(),
     )
-    logging.info("Saved reprojected raster as %s" % tar_file_name)
+    logging.info("Saved reprojected raster as %s", tar_file_name)
 
 
 def reproject_shapefile(source_dataset, source_layer, source_srs, target_srs):

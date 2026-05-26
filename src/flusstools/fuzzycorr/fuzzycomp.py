@@ -5,7 +5,12 @@ Usage: ``fuzzy_comparison = FuzzyComparison()``
 Descriptions will be updated by Bea
 """
 
-from .plotter import *
+import sys
+
+import numpy as np
+import rasterio as rio
+
+from .plotter import read_raster
 
 
 def f_similarity(centre_cell, neighbours):
@@ -213,10 +218,9 @@ class FuzzyComparison:
             "Neighbourhood: " + str(self.neigh) + " cells  \n",
             "\n",
         ]
-        file1 = open(result_file, "w")
-        file1.writelines(lines)
-        file1.write("Average fuzzy similarity: " + str(format(measure, ".4f")))
-        file1.close()
+        with open(result_file, "w") as file1:
+            file1.writelines(lines)
+            file1.write("Average fuzzy similarity: " + str(format(measure, ".4f")))
 
     def save_comparison_raster(self, array_local_measures, directory, file_name):
         """Create map of comparison"""

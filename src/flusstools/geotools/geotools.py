@@ -1,7 +1,16 @@
 """``geotools`` is a package for creating, modifying, and transforming geospatial datasets."""
 
-from .kml import *
-from .srs_mgmt import *
+import itertools
+import logging
+import os
+
+import numpy as np
+from osgeo import gdal, ogr
+
+from .dataset_mgmt import offset2coords
+from .raster_mgmt import create_raster, open_raster, raster2array
+from .shp_mgmt import create_shp
+from .srs_mgmt import get_srs, make_prj
 
 gdal.UseExceptions()
 
@@ -32,7 +41,7 @@ def float2int(raster_file_name, band_number=1):
         return raster_file_name
 
     # create integer raster
-    print(" * info: creating integer raster to Polygonize:\n   >> %s" % new_name)
+    print(f" * info: creating integer raster to Polygonize:\n   >> {new_name}")
     create_raster(
         new_name,
         array,
@@ -75,7 +84,7 @@ def raster2line(raster_file_name, out_shp_fn, pixel_value, max_distance_method="
     trajectory = np.where(array == pixel_value)
     if np.count_nonzero(trajectory) == 0:
         logging.error(
-            "! The defined pixel_value (%s) does not occur in the raster band." % str(pixel_value)
+            "! The defined pixel_value (%s) does not occur in the raster band.", str(pixel_value)
         )
         return
 
@@ -113,7 +122,7 @@ def raster2line(raster_file_name, out_shp_fn, pixel_value, max_distance_method="
     # create projection file
     srs = get_srs(raster)
     make_prj(out_shp_fn, int(srs.GetAuthorityCode(None)))
-    print(" * success (raster2line): wrote %s" % str(out_shp_fn))
+    print(f" * success (raster2line): wrote {out_shp_fn}")
 
 
 def raster2polygon(file_name, out_shp_fn, band_number=1, field_name="values"):
@@ -130,7 +139,7 @@ def raster2polygon(file_name, out_shp_fn, band_number=1, field_name="values"):
         osgeo.ogr.DataSource: Python object of the provided ``out_shp_fn``.
 
     """
-    logging.info(" * Polygonizing %s ..." % str(file_name))
+    logging.info(" * Polygonizing %s ...", str(file_name))
     # ensure that the input raster contains integer values only and open the input raster
     file_name = float2int(file_name)
     raster, raster_band = open_raster(file_name, band_number=band_number)
@@ -149,7 +158,7 @@ def raster2polygon(file_name, out_shp_fn, band_number=1, field_name="values"):
     # create projection file
     srs = get_srs(raster)
     make_prj(out_shp_fn, int(srs.GetAuthorityCode(None)))
-    logging.info(" * success (Polygonize): wrote %s" % str(out_shp_fn))
+    logging.info(" * success (Polygonize): wrote %s", str(out_shp_fn))
     return new_shp
 
 
@@ -209,14 +218,14 @@ def rasterize(
 
     # check if any action is required
     if os.path.isfile(out_raster_file_name) and not overwrite:
-        logging.info(" * %s already exists. Nothing to do." % out_raster_file_name)
+        logging.info(" * %s already exists. Nothing to do.", out_raster_file_name)
         return None
 
     # open data source
     try:
         source_ds = ogr.Open(in_shp_file_name)
     except RuntimeError:
-        logging.error("! Could not open %s." % str(in_shp_file_name))
+        logging.error("! Could not open %s.", str(in_shp_file_name))
         return None
     source_lyr = source_ds.GetLayer()
 
@@ -276,7 +285,7 @@ def rasterize(
             logging.error("! Invalid gdal.Grid options provided.")
             return None
         except RuntimeError as err:
-            logging.error("! %s." % str(err))
+            logging.error("! %s.", str(err))
 
     # create destination data source (GeoTIff raster)
     try:
@@ -284,7 +293,7 @@ def rasterize(
             out_raster_file_name, x_res, y_res, 1, eType=rdtype
         )
     except RuntimeError:
-        logging.error("! Could not create %s." % str(out_raster_file_name))
+        logging.error("! Could not create %s.", str(out_raster_file_name))
         return None
     target_ds.SetGeoTransform((x_min, pixel_size, 0, y_max, 0, -pixel_size))
     band = target_ds.GetRasterBand(1)
@@ -318,7 +327,7 @@ def rasterize(
                 options=["ALL_TOUCHED=TRUE"],
             )
     except RuntimeError:
-        logging.error("! Could not rasterize (burn values from %s)." % str(in_shp_file_name))
+        logging.error("! Could not rasterize (burn values from %s).", str(in_shp_file_name))
         return None
 
     # release raster band

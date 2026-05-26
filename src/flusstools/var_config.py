@@ -1,6 +1,10 @@
-"""Global variables"""
+"""Package-wide constants for flusstools.
 
-from import_mgmt import *
+This module defines plain configuration constants only. Import the specific
+names you need, e.g. ``from ..var_config import nan_value``.
+"""
+
+import os
 
 cache_folder = os.path.abspath("") + "/__cache__/"
 nan_value = -9999.0
@@ -19,8 +23,6 @@ gdal_dtype_dict = {
     10: "gdal.GDT_CFloat32",
     11: "gdal.GDT_CFloat64",
 }
-
-msg_from_lastools = "Please note that LAStools is not \"free\" (see http://lastools.org/LICENSE.txt)\r\ncontact 'martin.isenburg@rapidlasso.com' to clarify licensing terms if needed.\r\n"
 
 sql_command = """
 CREATE TABLE IF NOT EXISTS plants (

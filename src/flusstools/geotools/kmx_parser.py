@@ -13,7 +13,8 @@ import xml.sax
 import xml.sax.handler
 from html.parser import HTMLParser
 
-from helpers import *
+import pandas as pd
+from shapely.geometry import LineString, Point, Polygon
 
 
 class ModHTMLParser(HTMLParser):
@@ -152,17 +153,17 @@ class PlacemarkHandler(xml.sax.handler.ContentHandler):
             pass
 
         lsp = data.strip().split(" ")
-        linestring = map(lambda x: ast.literal_eval(x), lsp)
+        linestring = [ast.literal_eval(x) for x in lsp]
         try:
             spatial = Polygon(LineString(linestring))
             converted_poly = pd.Series({"geometry": spatial})
             return converted_poly
-        except:
+        except Exception:
             try:
                 g = ast.literal_eval(data)
                 points = pd.Series({"geometry": Point(g[:2]), "altitude": g[-1]})
                 return points
-            except:
+            except Exception:
                 pass
 
         try:

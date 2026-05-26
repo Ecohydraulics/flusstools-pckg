@@ -7,9 +7,42 @@ Example use: ``create_shortest_path(shp_file_name, start_node_id, end_node_id)``
 import json
 
 import networkx as nx
-from shapely.geometry import asLineString, asMultiPoint
+import numpy as np
+import shapefile
+from shapely.geometry import LineString, MultiPoint
 
-from .geotools import *
+
+def build_graph_from_lines(line_shp_name):
+    """Builds an undirected graph from the line features of a shapefile.
+
+    Replaces the removed ``networkx.read_shp``: every line feature becomes an
+    edge between its first and last vertex. Edges carry a ``distance`` weight
+    (summed segment length) and a ``Json`` attribute holding the full vertex
+    coordinates, as expected by :func:`get_path`.
+
+    Args:
+        line_shp_name (str): Input line shapefile name.
+
+    Returns:
+        networkx.Graph: Undirected graph of the line network.
+
+    """
+    reader = shapefile.Reader(line_shp_name)
+    graph = nx.Graph()
+    for shape in reader.shapes():
+        points = [tuple(pt) for pt in shape.points]
+        if len(points) < 2:
+            continue
+        distance = float(
+            np.sum(np.sqrt(np.sum(np.diff(np.array(points), axis=0) ** 2, axis=1)))
+        )
+        graph.add_edge(
+            points[0],
+            points[-1],
+            distance=distance,
+            Json=json.dumps({"coordinates": [list(pt) for pt in points]}),
+        )
+    return graph
 
 
 def create_shortest_path(line_shp_name, start_node_id, end_node_id):
@@ -24,17 +57,18 @@ def create_shortest_path(line_shp_name, start_node_id, end_node_id):
         None: Creates a graph of nodes (coordinate pairs) connecting a start node with an end node in the defined ``line_shp_name``.
 
     """
-    # load shapefile
-    nx_load_shp = nx.read_shp(line_shp_name)
+    # load shapefile into an undirected graph
+    graph = build_graph_from_lines(line_shp_name)
 
-    # with not all graphs connected, take the largest connected subgraph by using the connected_component_subgraphs function.
-    nx_list_subgraph = list(nx.connected_component_subgraphs(nx_load_shp.to_undirected()))[0]
+    # with not all graphs connected, take the largest connected subgraph
+    largest_component = max(nx.connected_components(graph), key=len)
+    nx_list_subgraph = graph.subgraph(largest_component)
 
     # get all the nodes in the network
-    nx_nodes = np.array(nx_list_subgraph.nodes())
+    nx_nodes = np.array(list(nx_list_subgraph.nodes()))
 
     # output the nodes to a GeoJSON file
-    network_nodes = asMultiPoint(nx_nodes)
+    network_nodes = MultiPoint(nx_nodes)
     write_geojson(
         line_shp_name.split(".shp")[0] + "_nodes.geojson", network_nodes.__geo_interface__
     )
@@ -51,7 +85,7 @@ def create_shortest_path(line_shp_name, start_node_id, end_node_id):
     nx_array_path = get_full_path(nx_short_path, nx_list_subgraph)
 
     # convert numpy array to Shapely Linestring
-    shortest_path = asLineString(nx_array_path)
+    shortest_path = LineString(nx_array_path)
 
     write_geojson(
         line_shp_name.split(".shp")[0] + "_Xpath.geojson", shortest_path.__geo_interface__

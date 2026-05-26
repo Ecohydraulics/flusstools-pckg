@@ -1,18 +1,17 @@
-import os
-import sys
+"""FlussTools - a Python toolbox for river and floodplain analysis."""
 
-sys.path.insert(0, os.path.dirname(__file__))
+from . import bedanalyst, fuzzycorr, geotools
+from .helpers import *
 
-try:
-    import bedanalyst
-    import fuzzycorr
-    import geotools
-    import lidartools
-    from helpers import *
-except ModuleNotFoundError:
-    print("Failed to initialize FlussTools - consider re-installation")
-
-try:
-    logging.getLogger()
-except NameError:
-    pass
+__all__ = [
+    "bedanalyst",
+    "fuzzycorr",
+    "geotools",
+    "cache",
+    "check_cache",
+    "check_if_file_in_use",
+    "err_info",
+    "get_file_names",
+    "lookup_value",
+    "remove_directory",
+]

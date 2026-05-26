@@ -4,7 +4,6 @@ gdal
 geojson
 geopandas
 h5py
-laspy
 mapclassify
 matplotlib
 networkx
@@ -12,6 +11,8 @@ numpy
 openpyxl
 pandas
 pyshp
+pyproj
+scikit-fuzzy
 rasterio
 rasterstats
 tk

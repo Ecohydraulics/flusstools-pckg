@@ -1,6 +1,11 @@
-"""Global variables"""
+"""Cross-cutting helper utilities for flusstools."""
 
-from var_config import *
+import logging
+import os
+import shutil
+from tkinter import messagebox
+
+from .var_config import cache_folder
 
 
 def cache(fun):
@@ -27,7 +32,7 @@ def check_if_file_in_use(filepath):
     """Checks if a file or list of files is in use by another process.
     If the file cannot be opened or there is an associated .lock file, it throws an exception.
     """
-    if type(filepath) == list:
+    if isinstance(filepath, list):
         for f in filepath:
             check_if_file_in_use(f)
         return
@@ -44,18 +49,17 @@ def check_if_file_in_use(filepath):
                         ".lock"
                     ):
                         logging.error(
-                            "%s is open in another program. Close the file and try again."
-                            % filepath
+                            "%s is open in another program. Close the file and try again.",
+                            filepath,
                         )
-                        raise Exception(
-                            "%s is open in another program. Close the file and try again."
-                            % filepath
+                        raise RuntimeError(
+                            f"{filepath} is open in another program. Close the file and try again."
                         )
 
         except OSError:
-            logging.error("%s is open in another program. Close the file and try again." % filepath)
-            raise Exception(
-                "%s is open in another program. Close the file and try again." % filepath
+            logging.error("%s is open in another program. Close the file and try again.", filepath)
+            raise RuntimeError(
+                f"{filepath} is open in another program. Close the file and try again."
             )
 
         finally:
@@ -122,10 +126,12 @@ def lookup_value(
         match = (df[src_column_name] <= value) & (df[src_column_name] > value)
     elif mode == "two_columns":
         match = (df[src_column_name] <= value) & (df[src_column_name2] > value)
+    else:
+        raise ValueError(f"Unknown mode '{mode}' (use 'single_column' or 'two_columns').")
     try:
         return df[lookup_column_name][match].values[0]
-    except:
-        # multiple error sources possible here
+    except (KeyError, IndexError):
+        # no matching row or missing column
         return None
 
 
@@ -147,8 +153,8 @@ def remove_directory(directory):
                 shutil.rmtree(os.path.join(root, d))
         shutil.rmtree(directory)
     except PermissionError:
-        print("WARNING: Could not remove %s (files locked by other program)." % directory)
+        print(f"WARNING: Could not remove {directory} (files locked by other program).")
     except FileNotFoundError:
-        print("WARNING: The directory %s does not exist." % directory)
+        print(f"WARNING: The directory {directory} does not exist.")
     except NotADirectoryError:
-        print("WARNING: %s is not a directory." % directory)
+        print(f"WARNING: {directory} is not a directory.")

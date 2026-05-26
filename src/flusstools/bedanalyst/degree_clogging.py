@@ -2,10 +2,27 @@
 of degree of clogging.
 """
 
-from .utils import *
+import numpy as np
+import skfuzzy as fuzz
+
+from .config import dc_limits
+from .utils import (
+    activate_fuzzy_funs,
+    add_columns,
+    add_results,
+    apply_fuzzy_rules,
+    compute_bcs,
+    compute_desfuzzy_funs,
+    compute_fuzzy_functions,
+    correct_degree_of_clogging,
+    find_centroids,
+    generate_ranges,
+    plot_aggregation,
+    plot_funs,
+)
 
 
-def degree_clogging(df_samples, output_csv_path, plot=[False, False]):
+def degree_clogging(df_samples, output_csv_path, plot=(False, False)):
     """Function for computing degree of clogging using the input riverbed parameter along the riverbed depth:
         + Fine Sediment Saare/Fraction (fsf/fss): [%]
         + Hydraulic Conductivity (kf): [m/s]
@@ -80,18 +97,20 @@ def degree_clogging(df_samples, output_csv_path, plot=[False, False]):
         )
 
         # Plot aggregation of areas and crisp values (degree of clogging)
-        plot_aggregation(
-            dc_param_range,
-            dc_mu_desfuzzy,
-            dc_desfuzzy_funs,
-            activation,
-            degree_of_clogging,
-            aggregated,
-            step,
-        ) if plot[0] else None
+        if plot[0]:
+            plot_aggregation(
+                dc_param_range,
+                dc_mu_desfuzzy,
+                dc_desfuzzy_funs,
+                activation,
+                degree_of_clogging,
+                aggregated,
+                step,
+            )
 
     # Plot membership functions
-    plot_funs(dc_param_range, dc_fuzzy_funs, dc_desfuzzy_funs) if plot[1] else None
+    if plot[1]:
+        plot_funs(dc_param_range, dc_fuzzy_funs, dc_desfuzzy_funs)
 
     # save the computed values into a csv
     df_samples.to_csv(output_csv_path)

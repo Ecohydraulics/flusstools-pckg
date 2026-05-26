@@ -1,6 +1,11 @@
 """This module contains the functions called by main."""
 
-from .config import *
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import skfuzzy as fuzz
+
+from .config import dc_limits
 
 
 def plot_funs(dc_param_range, dc_fuzzy_funs, dc_disfuzzy_funs):

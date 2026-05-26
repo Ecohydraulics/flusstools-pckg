@@ -12,11 +12,17 @@ Examples:
 
 """
 
-# from io import BytesIO, StringIO
+import logging
 import re
 from zipfile import ZipFile
 
-from .kmx_parser import *
+import geojson
+import geopandas
+import numpy as np
+import pandas as pd
+import shapefile
+
+from .kmx_parser import PlacemarkHandler
 
 
 def kmx2other(file, output="df"):

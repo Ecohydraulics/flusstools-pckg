@@ -1,5 +1,6 @@
-from .raster_mgmt import *
-from .shp_mgmt import *
+import logging
+
+from osgeo import gdal
 
 gdal.UseExceptions()
 
@@ -22,14 +23,14 @@ def coords2offset(geo_transform, x_coord, y_coord):
         pixel_width = geo_transform[1]
         pixel_height = geo_transform[5]
     except IndexError:
-        logging.error("Invalid geo_transform object (%s)." % str(geo_transform))
+        logging.error("Invalid geo_transform object (%s).", str(geo_transform))
         return None
 
     try:
         offset_x = int((x_coord - origin_x) / pixel_width)
         offset_y = int((y_coord - origin_y) / pixel_height)
     except ValueError:
-        logging.error("geo_transform tuple contains non-numeric data: %s" % str(geo_transform))
+        logging.error("geo_transform tuple contains non-numeric data: %s", str(geo_transform))
         return None
     return offset_x, offset_y
 
@@ -70,14 +71,14 @@ def offset2coords(geo_transform, offset_x, offset_y):
         pixel_width = geo_transform[1]
         pixel_height = geo_transform[5]
     except IndexError:
-        logging.error("Invalid geo_transform object (%s)." % str(geo_transform))
+        logging.error("Invalid geo_transform object (%s).", str(geo_transform))
         return None
 
     try:
         coord_x = origin_x + pixel_width * (offset_x + 0.5)
         coord_y = origin_y + pixel_height * (offset_y + 0.5)
     except ValueError:
-        logging.error("geo_transform tuple contains non-numeric data: %s" % str(geo_transform))
+        logging.error("geo_transform tuple contains non-numeric data: %s", str(geo_transform))
         return None
     return coord_x, coord_y
 
@@ -110,5 +111,5 @@ def verify_dataset(dataset):
             return "vector"
         return "empty"
     except AttributeError:
-        logging.error("%s is not an osgeo.gdal.Dataset object." % str(dataset))
+        logging.error("%s is not an osgeo.gdal.Dataset object.", str(dataset))
         return None
