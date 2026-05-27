@@ -14,9 +14,12 @@ readthedocs, so docs are updated manually): edit the local `flusstools-docs` clo
 
 ## Environment
 
-GDAL is the central pain point and is **conda/mamba-only** — do not expect `pip install flusstools` to
-pull a working GDAL. The dev environment is defined in `environment.yml` (conda env name `flussenv`,
-conda-forge, GDAL 3.10–3.11 / NumPy-2 ABI). Use it for anything that imports the package:
+GDAL is the central pain point. As of 2.0.0 it **is** declared as a runtime dependency (`gdal>=3.10`),
+so `pip install flusstools` will pull it — but GDAL ships **no PyPI wheels**, so pip compiles it against
+the *system* libgdal (`gdal-config` must be on PATH and the versions must match). On a machine without a
+system GDAL the pip build fails; use conda there instead. The dev environment is defined in
+`environment.yml` (conda env name `flussenv`, conda-forge, GDAL 3.10–3.11 / NumPy-2 ABI). Use it for
+anything that imports the package:
 
 ```sh
 mamba env create -f environment.yml      # first time
@@ -75,9 +78,12 @@ pulled third-party libs transitively and has been removed. The three subpackages
 
 These are the active problems this repo was flagged for — verify against current state before assuming:
 
-- **GDAL is undeclared by design.** `pyproject.toml` now declares `scikit-fuzzy` and `pyproj`, but the
-  `osgeo`/gdal bindings are deliberately *not* a pip dependency (no reliable PyPI wheel) — they must come
-  from conda (`environment.yml`) or system packages. `skfuzzy` is only imported by `bedanalyst`.
+- **GDAL is now a declared dependency (`gdal>=3.10`), but has no PyPI wheels.** `pip install flusstools`
+  pulls every requirement including GDAL, yet GDAL compiles against the *system* libgdal — so the pip
+  install only succeeds where `gdal-config` is present and version-matched; otherwise use conda
+  (`environment.yml`). The full import set is declared (incl. `scikit-fuzzy`/`skfuzzy`, used only by
+  `bedanalyst`, and `pyproj`). Because GDAL is now a dep, the **docs repo installs flusstools `--no-deps`**
+  on Read the Docs (`.readthedocs.yaml` post_install) and mocks the heavy imports in `conf.py`.
 - **`hatch-vcs` is declared but unwired.** It's in `[build-system].requires`, yet `version` is hard-coded
   in `pyproject.toml` while a `v1.1.14` git tag exists. Consider switching to dynamic VCS versioning
   (`dynamic = ["version"]` + `[tool.hatch.version] source = "vcs"`) — left as-is here because the build

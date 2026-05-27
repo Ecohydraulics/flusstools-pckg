@@ -6,6 +6,9 @@ numpy==2.3.1
 scipy==1.16.0
 
 # Geospatial analytics
+# gdal has no PyPI wheels: it builds against the system libgdal (gdal-config on
+# PATH) and the versions must match - or install it from conda (environment.yml).
+gdal>=3.10
 alphashape==1.3.1
 earthpy==0.9.4
 geojson==3.2.0

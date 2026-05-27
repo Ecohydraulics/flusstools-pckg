@@ -300,9 +300,9 @@ def raster2array(file_name, band_number=1):
 
     Returns:
         list: three-elements of [``osgeo.DataSet`` of the raster,
-        ``numpy.ndarray`` of the raster ``band_numer`` (input) where no-data
+        ``numpy.ndarray`` of the raster ``band_number`` (input) where no-data
         values are replaced with ``np.nan``, ``osgeo.GeoTransform`` of
-         the original raster]
+        the original raster]
 
     """
     # open the raster and band (see above)

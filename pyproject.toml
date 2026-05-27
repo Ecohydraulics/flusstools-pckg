@@ -14,7 +14,7 @@ build-backend = "hatchling.build"
 # ---------------------------------------------------------------------------
 [project]
 name            = "flusstools"
-version         = "1.1.14"
+version         = "2.0.0"
 description     = "A Python toolbox for river and floodplain analysis."
 readme          = "README.md"
 requires-python = ">=3.10"
@@ -37,10 +37,13 @@ classifiers     = [
 # ---------------------------------------------------------------------------
 # Runtime dependencies
 # ---------------------------------------------------------------------------
-# NOTE: GDAL (the `osgeo` Python bindings) is required at runtime but is intentionally
-# NOT listed here - it cannot be reliably installed from PyPI and must come from conda
-# (see environment.yml) or system packages.
+# NOTE on GDAL: the `osgeo` Python bindings are a hard runtime requirement and are
+# declared below as `gdal`. GDAL has no pre-built PyPI wheels, so `pip install flusstools`
+# compiles it against the *system* GDAL library (libgdal-dev / `gdal-config` on PATH);
+# the pip and system versions must match. On machines without a system GDAL, install it
+# from conda instead (see environment.yml). The pin tracks the NumPy-2 ABI (GDAL>=3.10).
 dependencies = [
+    "gdal>=3.10",
     "numpy>=2.3",
     "scipy>=1.16",
     "pandas>=2.3",
