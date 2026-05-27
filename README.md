@@ -1,38 +1,39 @@
 ## FlussTools
 
-Head for Python scripts for river analyses.
+`flusstools` is a Python toolbox for river, floodplain, and hydro-morphological analysis.
 
-The full documentation is available at [https://flusstools.readthedocs.io](https://flusstools.readthedocs.io/en/latest/).
+📖 **Documentation:** [flusstools.readthedocs.io](https://flusstools.readthedocs.io/en/latest/) &nbsp;•&nbsp; 📦 **PyPI:** [pypi.org/project/flusstools](https://pypi.org/project/flusstools/)
 
-### Issues
+### Modules
 
-We depend on GDAL and GDAL installation is buggy. To enable cross-platform support, we currently need to enforce numpy<2.0.0 because most Linux derivatives run on GDAL v3.6 but numpy2 requires GDAL>=3.9.1.
+- **`geotools`** – raster, shapefile, projection (SRS), and KML processing (GDAL-based)
+- **`fuzzycorr`** – fuzzy-set map comparison to assess the accuracy of (numerical) river models
+- **`bedanalyst`** – riverbed clogging analysis
 
-### Create Requirements.txt
+### Installation
 
-`pip-tools` helps to manage `requirements.txt` with more control. It separates direct dependencies from transitive ones.
-
-1. **Install `pip-tools`**:
-
-```sh
-pip install pip-tools
-```
-
-2. **Create `requirements.in`**:
-
-   List your direct dependencies in a `requirements.in` file. For example:
-
-```plaintext
-requests
-numpy
-```
-
-3. **Compile `requirements.txt`**:
-
-   Run `pip-compile` to generate `requirements.txt` from `requirements.in`:
+`flusstools` builds on **GDAL**, which has no pre-built PyPI wheel. The recommended, platform-independent way to install is therefore a **conda/mamba** environment:
 
 ```sh
-pip-compile requirements.in
+mamba create -n flussenv -c conda-forge python=3.11 gdal
+mamba activate flussenv
+pip install flusstools
 ```
 
+A plain `pip install flusstools` works **only** where a matching system GDAL is present (`gdal-config` on your `PATH`); otherwise pip tries to compile GDAL and fails. See the [installation guide](https://flusstools.readthedocs.io/en/latest/getstarted.html) for details.
 
+### Contributing & development
+
+The development environment is defined in `environment.yml` (conda, GDAL 3.10+ / NumPy-2 ABI):
+
+```sh
+mamba env create -f environment.yml
+mamba activate flussenv
+pip install -e . --no-deps
+```
+
+Runtime dependencies are declared in `pyproject.toml`; the pinned `requirements.txt` is regenerated from `requirements.in` with [`pip-tools`](https://github.com/jazzband/pip-tools) (`pip-compile requirements.in`). The full contribution and release workflow is on the [Contributing page](https://flusstools.readthedocs.io/en/latest/contribute.html) and in [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
+
+### License
+
+BSD license — see [`LICENSE`](LICENSE).

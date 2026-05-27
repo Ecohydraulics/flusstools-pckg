@@ -91,9 +91,6 @@ These are the active problems this repo was flagged for — verify against curre
   in `pyproject.toml` while `vX.Y.Z` git tags exist. Consider switching to dynamic VCS versioning
   (`dynamic = ["version"]` + `[tool.hatch.version] source = "vcs"`) — left as-is here because the build
   backend isn't installed in `flussenv` and the change can't be build-tested.
-- **NumPy version conflict in docs vs. metadata.** `README.md` says "enforce numpy<2.0.0" (old GDAL 3.6
-  constraint), but `pyproject.toml` and `environment.yml` now require numpy>=2.3 (GDAL 3.10+). The README
-  note is stale.
 - **`tests/` is empty** even though pytest/pytest-cov/pytest-xdist are configured. There is no CI
   (`.github/` does not exist). Any "run the tests" request currently has nothing to run.
 - **Ruff is configured permissively** — many docstring/import/style codes are ignored (see
