@@ -14,7 +14,7 @@ build-backend = "hatchling.build"
 # ---------------------------------------------------------------------------
 [project]
 name            = "flusstools"
-version         = "2.0.0"
+version         = "2.0.1"
 description     = "A Python toolbox for river and floodplain analysis."
 readme          = "README.md"
 requires-python = ">=3.10"

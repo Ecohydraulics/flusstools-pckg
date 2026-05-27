@@ -84,8 +84,8 @@ Please note that we are currently still in the *growing* phase of *flusstools*. 
 
 ```bash
 git add .
-git commit -m "FlussTools 1.1.14" 			# change to current version
-git tag -a v1.1.14 -m "FlussTools 1.1.14" 	# change to current version
+git commit -m "FlussTools 2.0.1" 			# change to current version
+git tag -a v2.0.1 -m "FlussTools 2.0.1" 	# change to current version
 git push
 ```
 

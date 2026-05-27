@@ -40,7 +40,7 @@ mamba run -n flussenv mypy src                   # type check (strict, py3.13)
 pip-compile requirements.in                      # regenerate requirements.txt (needs pip-tools)
 ```
 
-Version is hard-coded in `pyproject.toml` (`version = "1.1.14"`) despite `hatch-vcs` being listed —
+Version is hard-coded in `pyproject.toml` (`version = "2.0.1"`) despite `hatch-vcs` being listed —
 bump it there. Release/publish steps (twine, git tag `vX.Y.Z`) are in `docs/CONTRIBUTING.md`.
 
 ## Architecture
@@ -65,14 +65,17 @@ Three feature subpackages:
   graph (leaf → consumer): `raster_mgmt` + `shp_mgmt` → `dataset_mgmt` → `srs_mgmt`; `kmx_parser` →
   `kml`; `geotools.py` pulls from `raster_mgmt`/`shp_mgmt`/`srs_mgmt`/`dataset_mgmt`. `shortest_path.py`
   is standalone. `geotools/__init__.py` aggregates the full public API.
-- `fuzzycorr/` — fuzzy map comparison (uses `skfuzzy`); `prepro`, `plotter`, `fuzzycomp` (the only real
-  cross-link: `fuzzycomp` imports `read_raster` from `plotter`), aggregated by `fuzzycorr.py`.
-  `convertor.py` is a standalone script (runs file conversions at import — not imported by the package).
+- `fuzzycorr/` — fuzzy map comparison (uses `skfuzzy`); `prepro`, `plotter`, `fuzzycomp` (internal
+  cross-links: `fuzzycomp` imports `read_raster` from `plotter`; `prepro` imports `rasterize` from
+  `geotools.geotools`), aggregated by `fuzzycorr.py`. `convertor.py` is a standalone script (runs file
+  conversions at import — not imported by the package).
 - `bedanalyst/` — riverbed clogging analysis: `config` (constants) → `utils` → `degree_clogging`;
   `interp_z2shp` is standalone.
 
-`geotools` is *not* a dependency of `fuzzycorr`/`bedanalyst`: the old `from geotools import *` there only
-pulled third-party libs transitively and has been removed. The three subpackages are independent.
+`geotools` is a (small) dependency of `fuzzycorr`: `prepro.plain_raster` delegates to
+`geotools.geotools.rasterize` instead of duplicating the GDAL rasterization (the earlier `clip_raster`
+duplicate was removed). The old `from geotools import *` star-imports are gone — only this one explicit
+symbol is pulled. `bedanalyst` remains independent of the other two subpackages.
 
 ## Known issues to be aware of
 
@@ -85,7 +88,7 @@ These are the active problems this repo was flagged for — verify against curre
   `bedanalyst`, and `pyproj`). Because GDAL is now a dep, the **docs repo installs flusstools `--no-deps`**
   on Read the Docs (`.readthedocs.yaml` post_install) and mocks the heavy imports in `conf.py`.
 - **`hatch-vcs` is declared but unwired.** It's in `[build-system].requires`, yet `version` is hard-coded
-  in `pyproject.toml` while a `v1.1.14` git tag exists. Consider switching to dynamic VCS versioning
+  in `pyproject.toml` while `vX.Y.Z` git tags exist. Consider switching to dynamic VCS versioning
   (`dynamic = ["version"]` + `[tool.hatch.version] source = "vcs"`) — left as-is here because the build
   backend isn't installed in `flussenv` and the change can't be build-tested.
 - **NumPy version conflict in docs vs. metadata.** `README.md` says "enforce numpy<2.0.0" (old GDAL 3.6

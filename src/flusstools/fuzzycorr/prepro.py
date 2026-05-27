@@ -1,6 +1,18 @@
-"""Hints:
-- many class methods could be imported from geotools
-- already removed: clip_raster, which is a duplicate of raster_mgmt
+"""Pre-processing structures for the fuzzy map comparison.
+
+Some logic here overlaps with ``flusstools.geotools`` and is reused from there
+instead of being duplicated:
+
+- ``plain_raster`` delegates to ``geotools.geotools.rasterize``.
+- ``clip_raster`` was removed earlier (duplicate of the ``geotools`` raster clip).
+
+The remaining candidates are *not* drop-in duplicates and stay local:
+
+- ``array2raster`` (rasterio-based, bound to this instance's CRS/extent/resolution)
+  only partially overlaps ``geotools.raster_mgmt.create_raster``.
+- ``create_polygon`` (alphashape over this instance's in-memory points) only
+  partially overlaps ``geotools.shp_mgmt.polygon_from_shapepoints``, which reads a
+  shapefile from disk instead.
 """
 
 from pathlib import Path
@@ -11,9 +23,10 @@ import mapclassify.classifiers as mc
 import numpy as np
 import pyproj
 import rasterio as rio
-import shapefile
-from osgeo import gdal, ogr
+from osgeo import gdal
 from scipy import interpolate
+
+from ..geotools.geotools import rasterize
 
 
 class FuzzyPreProcessor:
@@ -182,33 +195,30 @@ class FuzzyPreProcessor:
         return new_dataset
 
     def plain_raster(self, shapefile, raster_file, res):
-        """Converts a shapefile(.shp) to a GeoTIFF raster without normalizing
+        """Converts a shapefile(.shp) to a GeoTIFF raster without normalizing.
+
+        Delegates to :func:`flusstools.geotools.geotools.rasterize`, burning this
+        pre-processor's ``attribute`` into the raster pixels (no duplicated GDAL
+        rasterization code is kept here).
 
         :param shapefile (str): filename with path of the input shapefile (*.shp)
         :param raster_file (str): filename with path of the output raster (*.tif)
         :param res (float): resolution of the cell
 
-        :returns None: saves the raster in the default directory
+        :returns int: ``0`` on success (``None`` on failure); saves the raster to ``raster_file``.
         """
         if "." not in shapefile[-4:]:
             shapefile += ".shp"
-
         if "." not in raster_file[-4:]:
             raster_file += ".tif"
-        source_ds = ogr.Open(shapefile)
-        source_layer = source_ds.GetLayer()
-        x_min, x_max, y_min, y_max = source_layer.GetExtent()
 
-        # Create Target - TIFF
-        cols = int((x_max - x_min) / res)
-        rows = int((y_max - y_min) / res)
-        _raster = gdal.GetDriverByName("GTiff").Create(raster_file, cols, rows, 1, gdal.GDT_Float32)
-        _raster.SetGeoTransform((x_min, res, 0, y_max, 0, res))
-        _band = _raster.GetRasterBand(1)
-        _band.SetNoDataValue(self.nodatavalue)
-
-        # Rasterize
-        gdal.RasterizeLayer(_raster, [1], source_layer, options=["ATTRIBUTE=" + self.attribute])
+        return rasterize(
+            shapefile,
+            raster_file,
+            pixel_size=res,
+            no_data_value=self.nodatavalue,
+            field_name=self.attribute,
+        )
 
     def array2raster(self, array, raster_file, save_ascii=True):
         """Saves a raster using interpolation
