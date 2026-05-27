@@ -2,13 +2,14 @@
 
 `flusstools` is a Python toolbox for river, floodplain, and hydro-morphological analysis.
 
-📖 **Documentation:** [flusstools.readthedocs.io](https://flusstools.readthedocs.io/en/latest/) &nbsp;•&nbsp; 📦 **PyPI:** [pypi.org/project/flusstools](https://pypi.org/project/flusstools/)
+* **Documentation:** [flusstools.readthedocs.io](https://flusstools.readthedocs.io/en/latest/)
+* **PyPI:** [pypi.org/project/flusstools](https://pypi.org/project/flusstools/)
 
 ### Modules
 
-- **`geotools`** – raster, shapefile, projection (SRS), and KML processing (GDAL-based)
-- **`fuzzycorr`** – fuzzy-set map comparison to assess the accuracy of (numerical) river models
-- **`bedanalyst`** – riverbed clogging analysis
+- **`geotools`** -- raster, shapefile, projection (SRS), and KML processing (GDAL-based)
+- **`fuzzycorr`** -- fuzzy-set map comparison to assess the accuracy of (numerical) river models
+- **`bedanalyst`** -- riverbed clogging analysis
 
 ### Installation
 
@@ -36,4 +37,4 @@ Runtime dependencies are declared in `pyproject.toml`; the pinned `requirements.
 
 ### License
 
-BSD license — see [`LICENSE`](LICENSE).
+BSD license -- see [`LICENSE`](LICENSE).
