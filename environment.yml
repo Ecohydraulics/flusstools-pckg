@@ -9,7 +9,7 @@ dependencies:
 
   - python>=3.10,<3.14
   - pip>=24.0
-  - setuptools>=70.0
+  - setuptools>=70,<82
   - wheel>=0.43
 
 # Scientific Python stack (NumPy‑2 ABI)
